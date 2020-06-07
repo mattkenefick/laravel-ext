@@ -1,0 +1,17 @@
+{
+    "name": "polymermallard/basic",
+    "description": "Polymer Mallard Basic",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": ">=5.3.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "@stable"
+    },
+    "autoload": {
+        "psr-4": {
+            "PolymerMallard\\": "src/"
+        }
+    }
+}
