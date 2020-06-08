@@ -12,10 +12,13 @@ use League\Fractal\Pagination\IlluminatePaginatorAdapter;
 use PolymerMallard\Data\Collection;
 use PolymerMallard\Data\ModelInterface;
 use PolymerMallard\Database\Query\Builder as Builder;
+use PolymerMallard\Trait;
 
 
 abstract class Model extends \Illuminate\Database\Eloquent\Model
 {
+    use Trait\Singleton;
+
     /**
      * Required fields on create
      *
@@ -126,7 +129,8 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      */
     public static function useCache($partialKey, $ttl = 600, $onNotFound)
     {
-        $key = $this->table . '-' . $partialKey;
+        $instance = self::instance();
+        $key = $instance->table . '-' . $partialKey;
 
         if (\Cache::has($key)) {
             $value = \Cache::get($key);
