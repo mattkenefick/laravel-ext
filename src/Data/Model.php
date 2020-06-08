@@ -40,6 +40,13 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
     );
 
     /**
+     * Default table name
+     *
+     * @var string
+     */
+    protected $table = 'unknown';
+
+    /**
      * Validator instance
      *
      * @var Validator
@@ -72,6 +79,25 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
     }
 
     /**
+     * Return count and save it into cache for an extended period of time
+     *
+     * Example:
+     *     $n = Film::count();
+     *
+     * @return int
+     */
+    public static function count()
+    {
+        // Use cached value if possible
+        $ttl = 60 * 60 * 24;
+        $value = static::useCache('count', $ttl, function() {
+            return self::all()->count();
+        });
+
+        return $value;
+    }
+
+    /**
      * The version of firstOrCreate we actually want.
      * Returns rows if integrity constraint found.
      *
@@ -88,6 +114,29 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
         }
 
         return self::where($attributes)->first();
+    }
+
+    /**
+     * Return count and save it into cache for an extended period of time
+     *
+     * Example:
+     *     $n = Film::count();
+     *
+     * @return boolean
+     */
+    public static function useCache($partialKey, $ttl = 600, $onNotFound)
+    {
+        $key = $this->table . '-' . $partialKey;
+
+        if (\Cache::has($key)) {
+            $value = \Cache::get($key);
+        }
+        else {
+            $value = call_user_func_array($onNotFound, array());
+            \Cache::put($key, $count, $ttl); // 24 hours
+        }
+
+        return $count;
     }
 
     /**
