@@ -13,12 +13,17 @@ use Validator;
 
 abstract class Controller extends Response implements Request
 {
+    /**
+     * Data to send down to document
+     * @var $domData
+     */
+    protected $domData = array();
 
     /**
-     * LIMIT_MAX
-     * Prevent responses that are too large
+     * Additional ModelInterface embeds to include
+     * @var $includes
      */
-    const LIMIT_MAX = 500;
+    protected $includes = null;
 
     /**
      * Max amount of results per page for paginated returns.
@@ -46,6 +51,18 @@ abstract class Controller extends Response implements Request
      */
     protected $max_id = null;
 
+    /**
+     * Default page
+     *
+     * @var int
+     */
+    protected $page = 1;
+
+    /**
+     * Resource key attached to JSON output
+     * @var $resourceKey
+     */
+    protected $resourceKey = null;
 
     /**
      * GET based route
@@ -161,7 +178,7 @@ abstract class Controller extends Response implements Request
      *
      * @return \Response
      */
-    public function payasdfload(array $rules, array $defaults = null)
+    public function payload(array $rules, array $defaults = null)
     {
         $fields    = array_keys($rules);
         $payload   = call_user_func_array('\Request::only', $fields);
@@ -257,6 +274,7 @@ abstract class Controller extends Response implements Request
     public function __construct()
     {
         // GET variables
+        $this->page = \Request::get('page') ?: $this->page;
         $this->limit = \Request::get('limit') ?: $this->limit;
         $this->max_id = \Request::get('max_id') ?: $this->max_id;
         $this->since_id = \Request::get('since_id') ?: $this->since_id;
@@ -306,6 +324,8 @@ abstract class Controller extends Response implements Request
 
     /**
      * Check if we're allowed to do something
+     *
+     * @return  boolean
      */
     public function can($permission)
     {
@@ -323,12 +343,14 @@ abstract class Controller extends Response implements Request
 
     /**
      * Check if we're allowed to do something
+     *
+     * @return boolean|User
      */
     public function adminCan($permission)
     {
         if ($this->isAdminRequest()) {
             if ($user = Models\Users::fromJWT()) {
-                if ( $user->can($permission) ) {
+                if ($user->can($permission)) {
                     return $user;
                 }
             }
