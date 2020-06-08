@@ -17,7 +17,7 @@ use PolymerMallard\Traits;
 
 abstract class Model extends \Illuminate\Database\Eloquent\Model
 {
-    use Trait\Singleton;
+    use Traits\Singleton;
 
     /**
      * Required fields on create
