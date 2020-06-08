@@ -139,10 +139,10 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
         }
         else {
             $value = call_user_func_array($onNotFound, array());
-            \Cache::put($key, $count, $ttl); // 24 hours
+            \Cache::put($key, $value, $ttl); // 10 minutes
         }
 
-        return $count;
+        return $value;
     }
 
     /**
