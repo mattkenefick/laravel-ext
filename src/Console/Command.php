@@ -1,4 +1,6 @@
-<?php namespace PolymerMallard\Console;
+<?php
+
+namespace PolymerMallard\Console;
 
 use Monolog\Logger;
 use Monolog\Formatter\LineFormatter;

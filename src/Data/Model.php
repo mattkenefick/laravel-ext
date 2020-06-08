@@ -1,4 +1,6 @@
-<?php namespace PolymerMallard\Data;
+<?php
+
+namespace PolymerMallard\Data;
 
 use App;
 use Carbon\Carbon;

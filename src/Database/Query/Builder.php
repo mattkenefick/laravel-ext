@@ -1,4 +1,6 @@
-<?php namespace PolymerMallard\Database\Query;
+<?php
+
+namespace PolymerMallard\Database\Query;
 
 use Illuminate\Support\Collection;
 use Illuminate\Database\ConnectionInterface;

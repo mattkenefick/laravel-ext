@@ -1,4 +1,6 @@
-<?php namespace PolymerMallard\Translation;
+<?php
+
+namespace PolymerMallard\Translation;
 
 use Illuminate\Translation\Translator as LaravelTranslator;
 

@@ -1,4 +1,6 @@
-<?php namespace PolymerMallard\Console;
+<?php
+
+namespace PolymerMallard\Console;
 
 
 class Log extends \Illuminate\Support\Facades\Log {

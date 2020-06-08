@@ -1,4 +1,6 @@
-<?php namespace PolymerMallard\Console\Input;
+<?php
+
+namespace PolymerMallard\Console\Input;
 
 
 class MockInput extends \Symfony\Component\Console\Input\ArrayInput

@@ -1,4 +1,6 @@
-<?php namespace PolymerMallard\Exception;
+<?php
+
+namespace PolymerMallard\Exception;
 
 use Exception;
 use Illuminate\Support\MessageBag;

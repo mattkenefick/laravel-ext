@@ -1,4 +1,6 @@
-<?php namespace PolymerMallard\Contracts\Api;
+<?php
+
+namespace PolymerMallard\Contracts\Api;
 
 
 interface Request {

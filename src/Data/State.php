@@ -1,4 +1,6 @@
-<?php namespace PolymerMallard\Data;
+<?php
+
+namespace PolymerMallard\Data;
 
 use PolymerMallard\Exception\ApiException;
 use League\Fractal;

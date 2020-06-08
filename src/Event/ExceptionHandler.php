@@ -1,4 +1,6 @@
-<?php namespace PolymerMallard\Event;
+<?php
+
+namespace PolymerMallard\Event;
 
 use Exception;
 use PolymerMallard\Exception\Handler;

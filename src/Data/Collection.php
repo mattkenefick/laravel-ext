@@ -1,4 +1,6 @@
-<?php namespace PolymerMallard\Data;
+<?php
+
+namespace PolymerMallard\Data;
 
 
 // class Collection extends \Illuminate\Support\Collection

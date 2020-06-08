@@ -1,4 +1,6 @@
-<?php namespace PolymerMallard\Socialite;
+<?php
+
+namespace PolymerMallard\Socialite;
 
 use Laravel\Socialite\Two\AbstractProvider;
 use Laravel\Socialite\Two\ProviderInterface;

@@ -1,4 +1,6 @@
-<?php namespace PolymerMallard\Provider;
+<?php
+
+namespace PolymerMallard\Provider;
 
 use App;
 use Config;

@@ -1,4 +1,6 @@
-<?php namespace PolymerMallard\Support\Facades;
+<?php
+
+namespace PolymerMallard\Support\Facades;
 
 /**
  * @see \PolymerMallard\Console\Log

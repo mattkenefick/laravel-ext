@@ -1,4 +1,6 @@
-<?php namespace PolymerMallard\Http\Controllers\Api;
+<?php
+
+namespace PolymerMallard\Http\Controllers\Api;
 
 use App\Data\Models;
 use PolymerMallard\Exception\ApiException;
