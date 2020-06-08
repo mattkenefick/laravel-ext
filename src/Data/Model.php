@@ -12,7 +12,7 @@ use League\Fractal\Pagination\IlluminatePaginatorAdapter;
 use PolymerMallard\Data\Collection;
 use PolymerMallard\Data\ModelInterface;
 use PolymerMallard\Database\Query\Builder as Builder;
-use PolymerMallard\Trait;
+use PolymerMallard\Traits;
 
 
 abstract class Model extends \Illuminate\Database\Eloquent\Model
