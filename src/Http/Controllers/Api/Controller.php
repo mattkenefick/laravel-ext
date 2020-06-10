@@ -16,6 +16,14 @@ use Validator;
 abstract class Controller extends Response implements Request
 {
     /**
+     * Maximum value for limit so we can't accidentally
+     * fetch all rows
+     *
+     * @var int
+     */
+    const LIMIT_MAX = 50;
+
+    /**
      * Data to send down to document
      * @var $domData
      */
