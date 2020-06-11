@@ -52,7 +52,7 @@ abstract class Response extends BaseController
      */
     public function model($model, $transformer, $key = null)
     {
-        $key      = $key ?: $this->resourceKey;
+        $key = $key ?: $this->resourceKey;
         $resource = new Fractal\Resource\Item($model, $transformer, $key);
 
         return $this->response($resource);
@@ -70,7 +70,7 @@ abstract class Response extends BaseController
      */
     public function collection($collection, $transformer, $key = null)
     {
-        $key      = $key ?: $this->resourceKey;
+        $key = $key ?: $this->resourceKey;
         $resource = new Fractal\Resource\Collection($collection, $transformer, $key);
 
         return $this->response($resource);
@@ -88,17 +88,18 @@ abstract class Response extends BaseController
      */
     public function paginate($paginator, $transformer, $key = null)
     {
-        $key         = $key ?: $this->resourceKey;
-        $collection  = $paginator->getCollection();
+        $key = $key ?: $this->resourceKey;
+        $collection = $paginator->getCollection();
 
         // print_r($paginator);exit;
         $currentPage = 1;
-        $lastPage    = (int) $paginator->lastPage();
+        $lastPage = (int) $paginator->lastPage();
 
-        $queryParams = array_diff_key($_GET, array_flip(['page']));
-        foreach ($queryParams as $key => $value) {
-            $paginator->addQuery($key, $value);
-        }
+        // $queryParams = array_diff_key($_GET, array_flip(['page']));
+
+        // foreach ($queryParams as $key => $value) {
+        //     $paginator->addQuery($key, $value);
+        // }
 
         $resource = new Fractal\Resource\Collection($collection, $transformer, $key);
         $resource->setPaginator(new IlluminatePaginatorAdapter($paginator));
@@ -303,7 +304,9 @@ abstract class Response extends BaseController
 
     public function getIncludes()
     {
-        return isset($_GET['include']) ? $_GET['include'] : [];
+        return isset($_GET['include'])
+            ? $_GET['include']
+            : [];
     }
 
     protected function getCacheKey()
@@ -359,8 +362,8 @@ abstract class Response extends BaseController
 
         // set cache
         if (getenv('API_CACHE') == 'true') {
-            $key       = $this->getCacheKey();
-            $expiry    = _const('MEMCACHE_EXPIRY');
+            $key = $this->getCacheKey();
+            $expiry = _const('MEMCACHE_EXPIRY');
             $expiresAt = Carbon::now()->addMinutes($expiry);
 
             Cache::put($key, $content, $expiresAt);
@@ -394,21 +397,22 @@ abstract class Response extends BaseController
 
     protected function useCache()
     {
-        $key     = $this->getCacheKey();
+        $key = $this->getCacheKey();
         $content = Cache::get($key);
-        $expiry  = Cache::get($key . '-expiry');
+        $expiry = Cache::get($key . '-expiry');
 
         return $this->simpleResponse($content, 200, array(
-            'X-MCACHE'        => 'HIT',
-            'X-MCACHE-KEY'    => getenv('API_DEBUG') == 'true' ? $key : null,
+            'X-MCACHE' => 'HIT',
+            'X-MCACHE-KEY' => getenv('API_DEBUG') == 'true' ? $key : null,
             'X-MCACHE-EXPIRY' => $expiry,
         ));
     }
 
     public function __construct()
     {
-        // setup includes
-        $this->includes = isset($_GET['include']) ? $_GET['include'] : [];
+        $this->includes = isset($_GET['include'])
+            ? $_GET['include']
+            : [];
     }
 
 
