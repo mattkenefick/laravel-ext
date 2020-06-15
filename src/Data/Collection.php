@@ -8,6 +8,17 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
 {
 
     /**
+     * Get model at index
+     *
+     * @param  int $index
+     * @return Model
+     */
+    public function at(int $index)
+    {
+        return $this[$index];
+    }
+
+    /**
      * delete
      *
      * Delete all models in collection
