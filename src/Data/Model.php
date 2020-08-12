@@ -164,8 +164,16 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
             $model->Handle_OnDeleted($model);
         });
 
+        static::saving(function ($model) {
+            $model->Handle_OnSaving($model);
+        });
+
         static::saved(function ($model) {
             $model->Handle_OnSaved($model);
+        });
+
+        static::updating(function ($model) {
+            $model->Handle_OnUpdating($model);
         });
 
         static::updated(function ($model) {
@@ -388,12 +396,30 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
     }
 
     /**
+     * Handle_OnSaving handler from `booted`
+     *
+     * @param void
+     */
+    protected function Handle_OnSaving($model): void {
+        // saved
+    }
+
+    /**
      * OnSaved handler from `booted`
      *
      * @param void
      */
     protected function Handle_OnSaved($model): void {
         // saved
+    }
+
+    /**
+     * OnUpdating handler from `booted`
+     *
+     * @param void
+     */
+    protected function Handle_OnUpdating($model): void {
+        // updated
     }
 
     /**
@@ -404,5 +430,4 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
     protected function Handle_OnUpdated($model): void {
         // updated
     }
-
 }

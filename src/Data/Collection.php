@@ -63,5 +63,4 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
     {
         return $this->findWhere($key, $operator, $value)->first();
     }
-
 }
