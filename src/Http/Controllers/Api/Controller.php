@@ -260,22 +260,22 @@ abstract class Controller extends Response implements Request
      *
      * @return bool
      */
-    public function checkPermissions($do, User $user = null)
-    {
-        if (getenv("API_REQUIRE_PERMISSIONS") === "false") {
-            Log::info("Bypass API Required Permissions. " . \Request::path());
+    // public function checkPermissions($do, User $user = null)
+    // {
+    //     if (getenv("API_REQUIRE_PERMISSIONS") === "false") {
+    //         Log::info("Bypass API Required Permissions. " . \Request::path());
 
-            return true;
-        }
+    //         return true;
+    //     }
 
-        $user = $user ?: \Auth::user();
+    //     $user = $user ?: \Auth::user();
 
-        if (!$user) {
-            return $this->errorUnauthorized();
-        }
+    //     if (!$user) {
+    //         return $this->errorUnauthorized();
+    //     }
 
-        return $user->can($do);
-    }
+    //     return $user->can($do);
+    // }
 
 
     // Internal

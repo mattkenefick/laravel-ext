@@ -226,15 +226,15 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
     /**
      * Purge if we have a getURL method
      */
-    public function purge(): bool
-    {
-        if (method_exists($this, 'getURL')) {
-            purge($this->getURL());
-            return true;
-        }
+    // public function purge(): bool
+    // {
+    //     if (method_exists($this, 'getURL')) {
+    //         purge($this->getURL());
+    //         return true;
+    //     }
 
-        return false;
-    }
+    //     return false;
+    // }
 
     /**
      * Override save to prevent writing to DB in emergencies
