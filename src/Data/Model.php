@@ -160,6 +160,10 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
             $model->Handle_OnCreated($model);
         });
 
+        static::deleting(function ($model) {
+            $model->Handle_OnDeleting($model);
+        });
+
         static::deleted(function ($model) {
             $model->Handle_OnDeleted($model);
         });
@@ -226,15 +230,15 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
     /**
      * Purge if we have a getURL method
      */
-    // public function purge(): bool
-    // {
-    //     if (method_exists($this, 'getURL')) {
-    //         purge($this->getURL());
-    //         return true;
-    //     }
+// public function purge(): bool
+// {
+//     if (method_exists($this, 'getURL')) {
+//         purge($this->getURL());
+//         return true;
+//     }
 
-    //     return false;
-    // }
+//     return false;
+// }
 
     /**
      * Override save to prevent writing to DB in emergencies
@@ -384,6 +388,15 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      */
     protected function Handle_OnCreated($model): void {
         // created
+    }
+
+    /**
+     * OnDeleting handler from `booted`
+     *
+     * @param void
+     */
+    protected function Handle_OnDeleting($model): void {
+        // deleting
     }
 
     /**
