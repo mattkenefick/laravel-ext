@@ -160,11 +160,13 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
             $model->Handle_OnCreated($model);
         });
 
-        static::deleting(function ($model) {
+        // For some reason, these must be "self"
+        self::deleting(function ($model) {
             $model->Handle_OnDeleting($model);
         });
 
-        static::deleted(function ($model) {
+        // For some reason, these must be "self"
+        self::deleted(function ($model) {
             $model->Handle_OnDeleted($model);
         });
 
