@@ -31,6 +31,27 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
     ];
 
     /**
+     * For SurrogateKeys Fastly / XKEY Varnish
+     *
+     * This is a static field because it's okay to compound on this array
+     * per request.
+     *
+     * @var array
+     */
+    public static $surrogateKeys = array();
+
+    /**
+     * Prefix of our cache key
+     * Default: get_class(...)
+     */
+    public $cachePrefix = null;
+
+    /**
+     * Used for surrogate keys that we can be appended to the list
+     */
+    public $canCache = true;
+
+    /**
      * @var $dates
      */
     protected $dates = ['deleted_at'];
@@ -230,17 +251,23 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
     }
 
     /**
-     * Purge if we have a getURL method
+     * Attempts to add this model to our list of surrogate keys
+     * which are used for invalidation
      */
-// public function purge(): bool
-// {
-//     if (method_exists($this, 'getURL')) {
-//         purge($this->getURL());
-//         return true;
-//     }
+    public function addToSurrogateKeys()
+    {
+        // Usually looks like "f", "md", or "App\Models\Media"
+        $cacheKey = $this->cachePrefix != null
+            ? $this->cachePrefix
+            : get_class($this);
 
-//     return false;
-// }
+        // Some classes can be excluded
+        if ($this->canCache) {
+            static::$surrogateKeys[] = $cacheKey . '.' . $this->id;
+        }
+
+        return static::$surrogateKeys;
+    }
 
     /**
      * Override save to prevent writing to DB in emergencies

@@ -6,6 +6,18 @@ namespace PolymerMallard\Data;
 // class Collection extends \Illuminate\Support\Collection
 class Collection extends \Illuminate\Database\Eloquent\Collection
 {
+    /**
+     * Attempts to add this model to our list of surrogate keys
+     * which are used for invalidation
+     */
+    public function addToSurrogateKeys()
+    {
+        foreach ($this as $model) {
+            if (is_a($model, Model::class)) {
+                $model->addToSurrogateKeys();
+            }
+        }
+    }
 
     /**
      * Get model at index

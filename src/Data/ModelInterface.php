@@ -40,12 +40,7 @@ class ModelInterface extends Fractal\TransformerAbstract
         }
 
         // Add to keys
-        // @todo
-        $cacheKey = $model->cachePrefix != null ? $model->cachePrefix : get_class($model);
-
-        if ($model->canCache) {
-            static::$surrogateKeys[] = $cacheKey . '.' . $model->id;
-        }
+        $model->addToSurrogateKeys();
 
         return $this->item($model, $transformer);
     }
@@ -67,19 +62,9 @@ class ModelInterface extends Fractal\TransformerAbstract
         }
 
         // Add to keys
-        // @todo
-        $ids = [];
-
-        foreach ($models as $value) {
-            $cacheKey = $value->cachePrefix != null ? $value->cachePrefix : get_class($value);
-
-            if ($value->canCache) {
-                $ids[] = $cacheKey . '.' . $value->id;
-            }
+        foreach ($models as $model) {
+            $model->addToSurrogateKeys();
         }
-
-        //
-        static::$surrogateKeys = array_merge(static::$surrogateKeys, $ids);
 
         return parent::collection($models, $transformer, $resourceKey);
     }
