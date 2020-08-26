@@ -3,10 +3,24 @@
 namespace PolymerMallard\Data;
 
 use League\Fractal;
+use League\Fractal\Scope;
 
+/**
+ *
+ */
 class ModelInterface extends Fractal\TransformerAbstract
 {
+    /**
+     * For SurrogateKeys Fastly / XKEY Varnish
+     *
+     * @var array
+     */
+    public static $surrogateKeys = array();
 
+    /**
+     * [$properties description]
+     * @var array
+     */
     protected $properties = array();
 
     /**
@@ -24,6 +38,10 @@ class ModelInterface extends Fractal\TransformerAbstract
                 return [];
             });
         }
+
+        // Add to keys
+        // @todo
+        static::$surrogateKeys[] = get_class($model) . '.' . $model->id;
 
         return $this->item($model, $transformer);
     }
@@ -43,6 +61,17 @@ class ModelInterface extends Fractal\TransformerAbstract
                 return [];
             });
         }
+
+        // Add to keys
+        // @todo
+        $ids = [];
+
+        foreach ($models as $value) {
+            $ids[] = get_class($value) . '.' . $value->id;
+        }
+
+        //
+        static::$surrogateKeys = array_merge(static::$surrogateKeys, $ids);
 
         return parent::collection($models, $transformer, $resourceKey);
     }
@@ -86,5 +115,4 @@ class ModelInterface extends Fractal\TransformerAbstract
     {
         $this->properties = array_merge($this->properties, $data);
     }
-
 }
