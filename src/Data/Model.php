@@ -252,7 +252,11 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
 
     /**
      * Attempts to add this model to our list of surrogate keys
-     * which are used for invalidation
+     * which are used for invalidation.
+     *
+     * $cacheKey.N is used for new items. When we create new items,
+     * there's no item to purge. Just because the key is on this
+     * doesn't mean we have to purge it.
      */
     public function addToSurrogateKeys()
     {
@@ -264,6 +268,7 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
         // Some classes can be excluded
         if ($this->canCache) {
             static::$surrogateKeys[] = $cacheKey . '.' . $this->id;
+            static::$surrogateKeys[] = $cacheKey . '.N';
         }
 
         return static::$surrogateKeys;
