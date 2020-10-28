@@ -40,7 +40,9 @@ class ModelInterface extends Fractal\TransformerAbstract
         }
 
         // Add to keys
-        $model->addToSurrogateKeys();
+        if (method_exists($model, 'addToSurrogateKeys')) {
+            $model->addToSurrogateKeys();
+        }
 
         return $this->item($model, $transformer);
     }
@@ -63,7 +65,9 @@ class ModelInterface extends Fractal\TransformerAbstract
 
         // Add to keys
         foreach ($models as $model) {
-            $model->addToSurrogateKeys();
+            if (method_exists($model, 'addToSurrogateKeys')) {
+                $model->addToSurrogateKeys();
+            }
         }
 
         return parent::collection($models, $transformer, $resourceKey);
