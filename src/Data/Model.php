@@ -275,7 +275,7 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
             static::$surrogateKeys[] = $cacheKey . '.' . $this->id;
 
             //
-            if (!$excludeNew && !$this->excludeNewFromSurrogateKeys) {
+            if ($excludeNew === false && $this->excludeNewFromSurrogateKeys === false) {
                 static::$surrogateKeys[] = $cacheKey . '.N';
             }
         }

@@ -19,7 +19,7 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
     {
         foreach ($this as $model) {
             if (is_a($model, Model::class)) {
-                $model->addToSurrogateKeys(!$excludeNew && !$this->excludeNewFromSurrogateKeys);
+                $model->addToSurrogateKeys($excludeNew || $this->excludeNewFromSurrogateKeys);
             }
         }
     }
