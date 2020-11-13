@@ -52,6 +52,11 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
     public $canCache = true;
 
     /**
+     * If we should exclude the .N from keys
+     */
+    public $excludeNewFromSurrogateKeys = false;
+
+    /**
      * @var $dates
      */
     protected $dates = ['deleted_at'];
@@ -258,7 +263,7 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      * there's no item to purge. Just because the key is on this
      * doesn't mean we have to purge it.
      */
-    public function addToSurrogateKeys()
+    public function addToSurrogateKeys($excludeNew = false)
     {
         // Usually looks like "f", "md", or "App\Models\Media"
         $cacheKey = $this->cachePrefix != null
@@ -268,7 +273,11 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
         // Some classes can be excluded
         if ($this->canCache) {
             static::$surrogateKeys[] = $cacheKey . '.' . $this->id;
-            static::$surrogateKeys[] = $cacheKey . '.N';
+
+            //
+            if (!$excludeNew && !$this->excludeNewFromSurrogateKeys) {
+                static::$surrogateKeys[] = $cacheKey . '.N';
+            }
         }
 
         return static::$surrogateKeys;

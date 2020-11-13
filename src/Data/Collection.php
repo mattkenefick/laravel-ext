@@ -7,14 +7,19 @@ namespace PolymerMallard\Data;
 class Collection extends \Illuminate\Database\Eloquent\Collection
 {
     /**
+     * If we should exclude the .N from keys
+     */
+    public $excludeNewFromSurrogateKeys = false;
+
+    /**
      * Attempts to add this model to our list of surrogate keys
      * which are used for invalidation
      */
-    public function addToSurrogateKeys()
+    public function addToSurrogateKeys($excludeNew = false)
     {
         foreach ($this as $model) {
             if (is_a($model, Model::class)) {
-                $model->addToSurrogateKeys();
+                $model->addToSurrogateKeys(!$excludeNew && !$this->excludeNewFromSurrogateKeys);
             }
         }
     }
