@@ -102,11 +102,15 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      *
      * @return [type]       [description]
      */
-    public static function bySlug(string $slug)
+    public static function bySlug(string $slug, int $type = 0)
     {
-        $model = static::firstWhere('slug', $slug);
+        $model = static::where('slug', $slug);
 
-        return $model;
+        if ($type) {
+            $model = $model->where('type', $type);
+        }
+
+        return $model->first();
     }
 
     /**
@@ -221,14 +225,14 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      *
      * @return string
      */
-    public function createSlug(string $title, int $id = 0): string
+    public function createSlug(string $title, int $type = 0, int $id = 0): string
     {
         // Normalize the title
         $slug = Str::slug($title);
 
         // Get any that could possibly be related.
         // This cuts the queries down by doing it once.
-        $allSlugs = $this->getRelatedSlugs($slug, $id);
+        $allSlugs = $this->getRelatedSlugs($slug, $id, $type);
 
         // If we haven't used it before then we are all good.
         if (!$allSlugs->contains('slug', $slug)) {
@@ -390,15 +394,21 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      *
      * @param  string  $slug
      * @param  integer $id
+     * @param  integer $type
      *
      * @return Collection
      */
-    protected function getRelatedSlugs(string $slug, int $id = 0)
+    protected function getRelatedSlugs(string $slug, int $type = 0, int $id = 0)
     {
-        return self::select('slug')
+        $model = self::select('slug')
             ->where('slug', 'like', $slug . '%')
-            ->where('id', '<>', $id)
-            ->get();
+            ->where('id', '<>', $id);
+
+        if ($type) {
+            $model = $model->where('type', $type);
+        }
+
+        return $model->get();
     }
 
     /**
