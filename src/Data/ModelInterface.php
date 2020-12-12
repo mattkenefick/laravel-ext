@@ -39,6 +39,28 @@ class ModelInterface extends Fractal\TransformerAbstract
     protected $properties = array();
 
     /**
+     * Load and decide on model / collection
+     *
+     * @param  array $rows
+     * @return mixed
+     */
+    public static function load($rows = [])
+    {
+        $instance = new static;
+
+        // Collection
+        if ($rows && count($rows)) {
+            return $instance->collection($rows, $instance);
+        }
+        else if (is_object($rows)) {
+            return $instance->model($rows, $instance);
+        }
+        else {
+            return $instance;
+        }
+    }
+
+    /**
      * Model alias
      *
      * @param  [type] $model       [description]
