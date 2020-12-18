@@ -121,16 +121,18 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      *
      * @return int
      */
-    public static function count()
-    {
-        // Use cached value if possible
-        $ttl = 60 * 60 * 24;
-        $value = static::useCache('count', $ttl, function() {
-            return self::all()->count();
-        });
+    // public static function count()
+    // {
+    //     // // Use cached value if possible
+    //     // $ttl = 60 * 60 * 24;
+    //     // $value = static::useCache('count', $ttl, function() {
+    //     //     return self::all()->count();
+    //     // });
 
-        return $value;
-    }
+    //     // return $value;
+    //     //
+    //     return static::all()->count();
+    // }
 
     /**
      * The version of firstOrCreate we actually want.
