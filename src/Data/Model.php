@@ -418,7 +418,7 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      *
      * @return \PolymerMallard\Database\Query\Builder
      */
-    protected function newBaseQueryBuilder(): Builder
+    protected function newBaseQueryBuilder()
     {
         $conn = $this->getConnection();
 
