@@ -202,6 +202,18 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
             $model->Handle_OnDeleted($model);
         });
 
+        static::retrieved(function ($model) {
+            $model->Handle_OnRetrieved($model);
+        });
+
+        static::restoring(function ($model) {
+            $model->Handle_OnRestoring($model);
+        });
+
+        static::restored(function ($model) {
+            $model->Handle_OnRestored($model);
+        });
+
         static::saving(function ($model) {
             $model->Handle_OnSaving($model);
         });
@@ -251,14 +263,6 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
         }
 
         throw new \Exception('Can not create a unique slug. We tried 10 times and ' . $newSlug . ' wasnt good enough.');
-    }
-
-    /**
-     * custom collection
-     */
-    public function newCollection(array $models = array())
-    {
-        return new Collection($models);
     }
 
     /**
@@ -428,11 +432,42 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
     }
 
     /**
+     * custom collection
+     */
+    public function newCollection(array $models = array())
+    {
+        return new Collection($models);
+    }
+
+    /**
+     * OnCreating or OnSaving handler from `booted`
+     *
+     * @param void
+     */
+    protected function Handle_OnCreatingOrSaving($model): void
+    {
+        // creating or saving
+    }
+
+    /**
+     * OnCreated or OnSaved handler from `booted`
+     *
+     * @param void
+     */
+    protected function Handle_OnCreatedOrSaved($model): void
+    {
+        // created or saved
+    }
+
+    /**
      * OnCreating handler from `booted`
      *
      * @param void
      */
-    protected function Handle_OnCreating($model): void {
+    protected function Handle_OnCreating($model): void
+    {
+        $this->Handle_OnCreatingOrSaving($model);
+
         // creating
     }
 
@@ -441,7 +476,10 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      *
      * @param void
      */
-    protected function Handle_OnCreated($model): void {
+    protected function Handle_OnCreated($model): void
+    {
+        $this->Handle_OnCreatedOrSaved($model);
+
         // created
     }
 
@@ -450,7 +488,8 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      *
      * @param void
      */
-    protected function Handle_OnDeleting($model): void {
+    protected function Handle_OnDeleting($model): void
+    {
         // deleting
     }
 
@@ -459,8 +498,39 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      *
      * @param void
      */
-    protected function Handle_OnDeleted($model): void {
+    protected function Handle_OnDeleted($model): void
+    {
         // deleted
+    }
+
+    /**
+     * OnRetrieved handler from `booted`
+     *
+     * @param void
+     */
+    protected function Handle_OnRetrieved($model): void
+    {
+        // retrieved
+    }
+
+    /**
+     * OnRestoring handler from `booted`
+     *
+     * @param void
+     */
+    protected function Handle_OnRestoring($model): void
+    {
+        // restoring
+    }
+
+    /**
+     * OnRestored handler from `booted`
+     *
+     * @param void
+     */
+    protected function Handle_OnRestored($model): void
+    {
+        // restored
     }
 
     /**
@@ -468,7 +538,10 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      *
      * @param void
      */
-    protected function Handle_OnSaving($model): void {
+    protected function Handle_OnSaving($model): void
+    {
+        $this->Handle_OnCreatingOrSaving($model);
+
         // saved
     }
 
@@ -477,7 +550,10 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      *
      * @param void
      */
-    protected function Handle_OnSaved($model): void {
+    protected function Handle_OnSaved($model): void
+    {
+        $this->Handle_OnCreatedOrSaved($model);
+
         // saved
     }
 
@@ -486,7 +562,8 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      *
      * @param void
      */
-    protected function Handle_OnUpdating($model): void {
+    protected function Handle_OnUpdating($model): void
+    {
         // updated
     }
 
@@ -495,7 +572,8 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      *
      * @param void
      */
-    protected function Handle_OnUpdated($model): void {
+    protected function Handle_OnUpdated($model): void
+    {
         // updated
     }
 }

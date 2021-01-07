@@ -341,8 +341,8 @@ abstract class Response extends BaseController
 
         $response->sendHeaders();
         $response->sendContent();
-        exit;
-        // throw new ApiException($content, null, null, [], $code);
+
+        throw new ApiException($content, null, null, [], $code);
     }
 
     protected function response($resource, $code = 200)
