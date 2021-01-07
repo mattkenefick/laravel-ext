@@ -206,13 +206,13 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
             $model->Handle_OnRetrieved($model);
         });
 
-        static::restoring(function ($model) {
-            $model->Handle_OnRestoring($model);
-        });
+        // static::restoring(function ($model) {
+        //     $model->Handle_OnRestoring($model);
+        // });
 
-        static::restored(function ($model) {
-            $model->Handle_OnRestored($model);
-        });
+        // static::restored(function ($model) {
+        //     $model->Handle_OnRestored($model);
+        // });
 
         static::saving(function ($model) {
             $model->Handle_OnSaving($model);
