@@ -244,25 +244,39 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
         // Normalize the title
         $slug = Str::slug($title);
 
+        return $this->createIncrementalField('slug', $slug, $type, $id);
+    }
+
+    /**
+     * Create a field that increments as a string
+     * like a slug/username/etc
+     *
+     * @param  string  $title
+     * @param  integer $id
+     *
+     * @return string
+     */
+    public function createIncrementalField(string $field = 'slug', string $string, int $type = 0, int $id = 0): string
+    {
         // Get any that could possibly be related.
         // This cuts the queries down by doing it once.
-        $allSlugs = $this->getRelatedSlugs($slug, $id, $type);
+        $allItems = $this->getRelatedFields($field, $string, $id, $type);
 
         // If we haven't used it before then we are all good.
-        if (!$allSlugs->contains('slug', $slug)) {
-            return $slug;
+        if (!$allItems->contains($field, $string)) {
+            return $string;
         }
 
         // Just append numbers like a savage until we find not used.
         for ($i = 1; $i <= 10; $i++) {
-            $newSlug = $slug . '-' . $i;
+            $newString = $string . '-' . $i;
 
-            if (!$allSlugs->contains('slug', $newSlug)) {
-                return $newSlug;
+            if (!$allItems->contains($field, $newString)) {
+                return $newString;
             }
         }
 
-        throw new \Exception('Can not create a unique slug. We tried 10 times and ' . $newSlug . ' wasnt good enough.');
+        throw new \Exception('Can not create a unique ' . $field . '. We tried 10 times and ' . $newString . ' wasnt good enough.');
     }
 
     /**
@@ -396,6 +410,28 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
     }
 
     /**
+     * Get fields of type
+     *
+     * @param  string  $string
+     * @param  integer $id
+     * @param  integer $type
+     *
+     * @return Collection
+     */
+    protected function getRelatedFields(string $field, string $string, int $type = 0, int $id = 0)
+    {
+        $model = self::select($field)
+            ->where($field, 'like', $string . '%')
+            ->where('id', '<>', $id);
+
+        if ($type) {
+            $model = $model->where('type', $type);
+        }
+
+        return $model->get();
+    }
+
+    /**
      * Get slugs of type
      *
      * @param  string  $slug
@@ -406,15 +442,7 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      */
     protected function getRelatedSlugs(string $slug, int $type = 0, int $id = 0)
     {
-        $model = self::select('slug')
-            ->where('slug', 'like', $slug . '%')
-            ->where('id', '<>', $id);
-
-        if ($type) {
-            $model = $model->where('type', $type);
-        }
-
-        return $model->get();
+        return $this->getRelatedFields('slug', $slug, $type, $id);
     }
 
     /**
