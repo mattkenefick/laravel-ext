@@ -15,11 +15,11 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
      * Attempts to add this model to our list of surrogate keys
      * which are used for invalidation
      */
-    public function addToSurrogateKeys($excludeNew = false)
+    public function addToSurrogateKeys($excludeNew = false, $withPrefix = '')
     {
         foreach ($this as $model) {
             if (is_a($model, Model::class)) {
-                $model->addToSurrogateKeys($excludeNew || $this->excludeNewFromSurrogateKeys);
+                $model->addToSurrogateKeys($excludeNew || $this->excludeNewFromSurrogateKeys, $withPrefix);
             }
         }
     }
