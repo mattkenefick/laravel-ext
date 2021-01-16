@@ -309,7 +309,7 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      * Returns surrogate key for use in `addToSurrogateKeys` but also for
      * custom purge requests
      */
-    public function getSurrogateKey($withPrefix = '', $includeId = false)
+    public function getSurrogateKey($withPrefix = '', $includeId = true)
     {
         // Usually looks like "f", "md", or "App\Models\Media"
         $cacheKey = $this->cachePrefix != null
