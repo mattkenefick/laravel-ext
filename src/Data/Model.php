@@ -290,14 +290,7 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
     public function addToSurrogateKeys($excludeNew = false, $withPrefix = '')
     {
         // Usually looks like "f", "md", or "App\Models\Media"
-        $cacheKey = $this->cachePrefix != null
-            ? $this->cachePrefix
-            : get_class($this);
-
-        // Apply prefix
-        $cacheKey = $withPrefix != ''
-            ? $withPrefix . '.' . $cacheKey
-            : $cacheKey;
+        $cacheKey = $this->getSurrogateKey($withPrefix, false);
 
         // Some classes can be excluded
         if ($this->canCache) {
@@ -310,6 +303,30 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
         }
 
         return static::$surrogateKeys;
+    }
+
+    /**
+     * Returns surrogate key for use in `addToSurrogateKeys` but also for
+     * custom purge requests
+     */
+    public function getSurrogateKey($withPrefix = '', $includeId = false)
+    {
+        // Usually looks like "f", "md", or "App\Models\Media"
+        $cacheKey = $this->cachePrefix != null
+            ? $this->cachePrefix
+            : get_class($this);
+
+        // Apply prefix
+        $cacheKey = $withPrefix != ''
+            ? $withPrefix . '.' . $cacheKey
+            : $cacheKey;
+
+        // Get key
+        if ($this->canCache && $includeId) {
+            return $cacheKey . '.' . $this->id;
+        }
+
+        return $cacheKey;
     }
 
     /**
