@@ -240,12 +240,17 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      * @return string
      */
     // public function createSlug(string $title, int $type = 0, int $id = 0): string
-    public function createSlug(string $title, array $uniqueConstraints = [], int $id = 0): string
+    public function createSlug(string $title, array $uniqueConstraints = [], int $idToExclude = 0): string
     {
         // Normalize the title
         $slug = Str::slug($title);
 
-        return $this->createIncrementalField('slug', $slug, $uniqueConstraints, $id);
+        // Use this models ID if one has not been supplied
+        if ($idToExclude === 0 && $this->id > 0) {
+            $idToExclude = $this->id;
+        }
+
+        return $this->createIncrementalField('slug', $slug, $uniqueConstraints, $idToExclude);
     }
 
     /**
@@ -257,11 +262,11 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      *
      * @return string
      */
-    public function createIncrementalField(string $field = 'slug', string $string, array $uniqueConstraints = [], int $id = 0): string
+    public function createIncrementalField(string $field = 'slug', string $string, array $uniqueConstraints = [], int $idToExclude = 0): string
     {
         // Get any that could possibly be related.
         // This cuts the queries down by doing it once.
-        $allItems = $this->getRelatedFields($field, $string, $uniqueConstraints, $id);
+        $allItems = $this->getRelatedFields($field, $string, $uniqueConstraints, $idToExclude);
 
         // If we haven't used it before then we are all good.
         if (!$allItems->contains($field, $string)) {
@@ -441,11 +446,11 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      *
      * @return Collection
      */
-    protected function getRelatedFields(string $field, string $string, array $uniqueConstraints = [], int $id = 0)
+    protected function getRelatedFields(string $field, string $string, array $uniqueConstraints = [], int $idToExclude = 0)
     {
         $model = self::select($field)
             ->where($field, 'like', $string . '-%') // Should we use the "-"?
-            ->where('id', '<>', $id);
+            ->where('id', '<>', $idToExclude);
 
         if ($uniqueConstraints) {
             foreach ($uniqueConstraints as $key => $value) {
@@ -465,9 +470,9 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      *
      * @return Collection
      */
-    protected function getRelatedSlugs(string $slug, array $uniqueConstraints = [], int $id = 0)
+    protected function getRelatedSlugs(string $slug, array $uniqueConstraints = [], int $idToExclude = 0)
     {
-        return $this->getRelatedFields('slug', $slug, $uniqueConstraints, $id);
+        return $this->getRelatedFields('slug', $slug, $uniqueConstraints, $idToExclude);
     }
 
     /**
