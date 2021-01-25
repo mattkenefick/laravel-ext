@@ -239,12 +239,13 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      *
      * @return string
      */
-    public function createSlug(string $title, int $type = 0, int $id = 0): string
+    // public function createSlug(string $title, int $type = 0, int $id = 0): string
+    public function createSlug(string $title, array $uniqueConstraints = [], int $id = 0): string
     {
         // Normalize the title
         $slug = Str::slug($title);
 
-        return $this->createIncrementalField('slug', $slug, $type, $id);
+        return $this->createIncrementalField('slug', $slug, $uniqueConstraints, $id);
     }
 
     /**
@@ -256,11 +257,11 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      *
      * @return string
      */
-    public function createIncrementalField(string $field = 'slug', string $string, int $type = 0, int $id = 0): string
+    public function createIncrementalField(string $field = 'slug', string $string, array $uniqueConstraints = [], int $id = 0): string
     {
         // Get any that could possibly be related.
         // This cuts the queries down by doing it once.
-        $allItems = $this->getRelatedFields($field, $string, $id, $type);
+        $allItems = $this->getRelatedFields($field, $string, $uniqueConstraints, $id);
 
         // If we haven't used it before then we are all good.
         if (!$allItems->contains($field, $string)) {
@@ -440,14 +441,16 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      *
      * @return Collection
      */
-    protected function getRelatedFields(string $field, string $string, int $type = 0, int $id = 0)
+    protected function getRelatedFields(string $field, string $string, array $uniqueConstraints = [], int $id = 0)
     {
         $model = self::select($field)
-            ->where($field, 'like', $string . '%')
+            ->where($field, 'like', $string . '-%') // Should we use the "-"?
             ->where('id', '<>', $id);
 
-        if ($type) {
-            $model = $model->where('type', $type);
+        if ($uniqueConstraints) {
+            foreach ($uniqueConstraints as $key => $value) {
+                $model = $model->where($key, $value);
+            }
         }
 
         return $model->get();
@@ -462,9 +465,9 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      *
      * @return Collection
      */
-    protected function getRelatedSlugs(string $slug, int $type = 0, int $id = 0)
+    protected function getRelatedSlugs(string $slug, array $uniqueConstraints = [], int $id = 0)
     {
-        return $this->getRelatedFields('slug', $slug, $type, $id);
+        return $this->getRelatedFields('slug', $slug, $uniqueConstraints, $id);
     }
 
     /**
