@@ -274,7 +274,7 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
         }
 
         // Just append numbers like a savage until we find not used.
-        for ($i = 1; $i <= 10; $i++) {
+        for ($i = 1; $i <= 30; $i++) {
             $newString = $string . '-' . $i;
 
             if (!$allItems->contains($field, $newString)) {
@@ -282,7 +282,7 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
             }
         }
 
-        throw new \Exception('Can not create a unique ' . $field . '. We tried 10 times and ' . $newString . ' wasnt good enough.');
+        throw new \Exception('Can not create a unique ' . $field . '. We tried 30 times and ' . $newString . ' wasnt good enough.');
     }
 
     /**
@@ -449,7 +449,7 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
     protected function getRelatedFields(string $field, string $string, array $uniqueConstraints = [], int $idToExclude = 0)
     {
         $model = self::select($field)
-            ->where($field, 'like', $string . '-%') // Should we use the "-"?
+            ->where($field, 'like', $string . '%') // Should we use the "-"?
             ->where('id', '<>', $idToExclude);
 
         if ($uniqueConstraints) {
