@@ -4,6 +4,7 @@ namespace PolymerMallard\Data;
 
 use App;
 use Carbon\Carbon;
+use Cache;
 use Illuminate\Database\QueryException;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Validator;
@@ -166,12 +167,14 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
         $instance = self::instance();
         $key = $instance->table . '-' . $partialKey;
 
-        if (\Cache::has($key)) {
-            $value = \Cache::get($key);
+        if (Cache::store('redis')->has($key)) {
+            $storedValue = Cache::store('redis')->get($key);
+            $value = json_decode($storedValue);
         }
         else {
             $value = call_user_func_array($onNotFound, array());
-            \Cache::put($key, $value, $ttl); // 10 minutes
+            $storedValue = json_encode($value);
+            Cache::store('redis')->put($key, $storedValue, $ttl);
         }
 
         return $value;
