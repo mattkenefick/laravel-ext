@@ -327,7 +327,7 @@ abstract class Response extends BaseController
     // Internal
     // ----------------------------------------------------------------------
 
-    protected function error($content = '', $code = 400)
+    protected function error(string $content = '', $code = 400, $headers = array(), bool $shouldExit = false)
     {
         $response = new \Illuminate\Http\Response($content, $code);
         $response->header('Content-Type', 'application/json');
