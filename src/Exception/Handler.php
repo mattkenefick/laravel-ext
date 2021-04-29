@@ -1,4 +1,6 @@
-<?php namespace PolymerMallard\Exception;
+<?php
+
+namespace PolymerMallard\Exception;
 
 use Exception;
 use ReflectionFunction;
@@ -6,8 +8,7 @@ use Illuminate\Http\Response;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
-class Handler
-{
+class Handler {
     /**
      * Array of exception handlers.
      *
@@ -22,8 +23,7 @@ class Handler
      *
      * @return void
      */
-    public function register(callable $callback)
-    {
+    public function register(callable $callback) {
         $hint = $this->handlerHint($callback);
 
         $this->handlers[$hint] = $callback;
@@ -36,17 +36,16 @@ class Handler
      *
      * @return \Illuminate\Http\Response
      */
-    public function handle(Exception $exception)
-    {
+    public function handle(Exception $exception) {
         foreach ($this->handlers as $hint => $handler) {
-            if (! $exception instanceof $hint) {
+            if (!$exception instanceof $hint) {
                 continue;
             }
 
             $response = $handler($exception);
 
-            if (! is_null($response)) {
-                if (! $response instanceof Response) {
+            if (!is_null($response)) {
+                if (!$response instanceof Response) {
                     $response = new Response($response, $exception instanceof HttpExceptionInterface ? $exception->getStatusCode() : 200);
                 }
 
@@ -62,14 +61,14 @@ class Handler
      *
      * @return bool
      */
-    public function willHandle(Exception $exception)
-    {
+    public function willHandle(Exception $exception) {
         if ($exception instanceof ApiException) {
             return false;
         }
         if ($exception instanceof MethodNotAllowedHttpException) {
             return false;
         }
+
         return true;
     }
 
@@ -80,8 +79,7 @@ class Handler
      *
      * @return string
      */
-    protected function handlerHint(callable $callback)
-    {
+    protected function handlerHint(callable $callback) {
         $reflection = new ReflectionFunction($callback);
 
         $exception = $reflection->getParameters()[0];
@@ -94,8 +92,7 @@ class Handler
      *
      * @return array
      */
-    public function getHandlers()
-    {
+    public function getHandlers() {
         return $this->handlers;
     }
 }

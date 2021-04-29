@@ -1,10 +1,10 @@
 {
     "name": "mattkenefick/laravel-ext",
-    "description": "Polymer Mallard Basic",
+    "description": "Laravel extension package",
     "type": "project",
     "license": "MIT",
     "require": {
-        "php": ">=5.3.2"
+        "php": ">=7.4"
     },
     "require-dev": {
         "phpunit/phpunit": "@stable"

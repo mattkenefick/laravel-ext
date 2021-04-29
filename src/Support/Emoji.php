@@ -1,4 +1,6 @@
-<?php namespace PolymerMallard\Support;
+<?php
+
+namespace PolymerMallard\Support;
 
 /**
  * @see \PolymerMallard\Support\Emoji

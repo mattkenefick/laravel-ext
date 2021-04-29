@@ -1,26 +1,24 @@
-<?php namespace PolymerMallard\Data;
+<?php
+
+namespace PolymerMallard\Data;
 
 use PolymerMallard\Exception\ApiException;
 use League\Fractal;
 
-class DataModel
-{
-
-    protected $properties = array();
-
+class DataModel {
+    protected $properties = [];
 
     /**
      * load
      *
      * Load a local JSON file into data model and returns instantiated class.
      *
-     * @param string $path  Path (after base_path()) of JSON resource
+     * @param string $path Path (after base_path()) of JSON resource
      *
      * @return PolymerMallard\Data\DataModel
      */
-    public static function load($path = null)
-    {
-        $class    = get_called_class();
+    public static function load($path = null) {
+        $class = get_called_class();
         $instance = new $class;
 
         // test string
@@ -33,17 +31,15 @@ class DataModel
 
                 if (strpos($data, '{') === 0 || strpos($data, '[') === 0) {
                     $json = json_decode($data);
-                }
-                else {
+                } else {
                     throw new ApiException('File malformed. JSON may not be formed correctly.');
                 }
             }
 
             // load json
-            else if (strpos($path, '{') === 0 || strpos($path, '[') === 0) {
+            elseif (strpos($path, '{') === 0 || strpos($path, '[') === 0) {
                 $json = json_decode($path);
-            }
-            else {
+            } else {
                 throw new ApiException('String could not be converted to JSON object.');
             }
         }
@@ -72,12 +68,11 @@ class DataModel
      * Convenience method that transforms this model using a specified
      * ModelInterface
      *
-     * @param ModelInterface $modelInterface  Object describing how to transform model
+     * @param ModelInterface $modelInterface Object describing how to transform model
      *
      * @return League\Fractal\Resource\Item
      */
-    public function transform($modelInterface)
-    {
+    public function transform($modelInterface) {
         $resource = new Fractal\Resource\Item($this, $modelInterface);
 
         return $resource;
@@ -88,12 +83,11 @@ class DataModel
      *
      * Transforms data to array.
      *
-     * @param ModelInterface $modelInterface  Object describing how to transform model
+     * @param ModelInterface $modelInterface Object describing how to transform model
      *
      * @return League\Fractal\Resource\Item
      */
-    public function transformToArray($modelInterface)
-    {
+    public function transformToArray($modelInterface) {
         $resource = $this->transform($modelInterface);
 
         $fractal = new Fractal\Manager;
@@ -106,22 +100,18 @@ class DataModel
         return get_object_vars($this);
     }
 
-
     // Internal
     // ----------------------------------------------------------------------
 
-    public function __construct(array $data = array())
-    {
+    public function __construct(array $data = []) {
         $this->properties = array_merge($this->properties, $data);
     }
 
-    public function __set($name, $value)
-    {
+    public function __set($name, $value) {
         $this->properties[$name] = $value;
     }
 
-    public function __get($name)
-    {
+    public function __get($name) {
         if (array_key_exists($name, $this->properties)) {
             return $this->properties[$name];
         }
@@ -136,5 +126,4 @@ class DataModel
 
         return null;
     }
-
 }

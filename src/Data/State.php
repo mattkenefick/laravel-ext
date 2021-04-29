@@ -1,20 +1,15 @@
-<?php namespace PolymerMallard\Data;
+<?php
 
-use PolymerMallard\Exception\ApiException;
-use League\Fractal;
+namespace PolymerMallard\Data;
 
-class State
-{
+class State {
+    protected static $properties = [];
 
-    protected static $properties = array();
-
-
-    public static function header($key, $value = NULL)
-    {
-        if (isset($value))
+    public static function header($key, $value = null) {
+        if (isset($value)) {
             self::$properties["header.$key"] = $value;
+        }
 
         return @self::$properties["header.$key"] ?: '';
     }
-
 }

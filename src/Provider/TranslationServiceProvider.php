@@ -1,20 +1,16 @@
-<?php namespace PolymerMallard\Provider;
+<?php
+
+namespace PolymerMallard\Provider;
 
 use App;
 use Config;
-use Input;
 use Illuminate\Translation\TranslationServiceProvider as TSP;
 
-
-class TranslationServiceProvider extends TSP
-{
-
-    public function boot()
-    {
+class TranslationServiceProvider extends TSP {
+    public function boot() {
         $this->load();
 
-        $this->app->bindShared('translator', function($app)
-        {
+        $this->app->bindShared('translator', function ($app) {
             $loader = $app['translation.loader'];
             $locale = $app['config']['app.locale'];
 
@@ -29,14 +25,13 @@ class TranslationServiceProvider extends TSP
         parent::boot();
     }
 
-    protected function load()
-    {
+    protected function load() {
         // locales
         $locales = json_decode(file_get_contents(base_path() . '/resources/lang/locales.json'));
 
         // akamai
         $headers = \getallheaders();
-        $headers['X-Akamai-Edgescape'] = isset($headers['X-Akamai-Edgescape']) ? $headers['X-Akamai-Edgescape'] : "";
+        $headers['X-Akamai-Edgescape'] = isset($headers['X-Akamai-Edgescape']) ? $headers['X-Akamai-Edgescape'] : '';
 
         parse_str(str_replace(',', '&', $headers['X-Akamai-Edgescape']), $edgescape);
 
@@ -54,16 +49,15 @@ class TranslationServiceProvider extends TSP
 
         // override country
         if ($country = \Request::get('country')) {
-            App::setLocale("EN");
+            App::setLocale('EN');
             Config::set('app.country_code', strtoupper($country));
         }
 
         // get cookie (if we don't have country)
-        else if (isset($_COOKIE['country'])) {
+        elseif (isset($_COOKIE['country'])) {
             $country = $_COOKIE['country'];
             Config::set('app.country_code', strtoupper($country));
         }
-
 
         // convert locale
         if ($lang = \Request::get('lang')) {
@@ -71,19 +65,19 @@ class TranslationServiceProvider extends TSP
         }
 
         // get cookie (if we don't have country)
-        else if (isset($_COOKIE['language']) && !isset($country)) {
+        elseif (isset($_COOKIE['language']) && !isset($country)) {
             App::setLocale($_COOKIE['language']);
         }
 
         // facebook hit
-        else if (
-            isset($_SERVER["HTTP_USER_AGENT"]) &&
+        elseif (
+            isset($_SERVER['HTTP_USER_AGENT']) &&
             (
-                strpos($_SERVER["HTTP_USER_AGENT"], "facebookexternalhit/") !== false ||
-                strpos($_SERVER["HTTP_USER_AGENT"], "Facebot") !== false
+                strpos($_SERVER['HTTP_USER_AGENT'], 'facebookexternalhit/') !== false ||
+                strpos($_SERVER['HTTP_USER_AGENT'], 'Facebot') !== false
             )
         ) {
-            App::setLocale("en");
+            App::setLocale('en');
         }
 
         // use locale
@@ -92,8 +86,7 @@ class TranslationServiceProvider extends TSP
 
             if (isset($locale) && isset($locale->iso)) {
                 $iso = $locale->iso;
-            }
-            else {
+            } else {
                 $iso = Config::get('app.fallback_locale');
             }
 
@@ -101,5 +94,4 @@ class TranslationServiceProvider extends TSP
             App::setLocale($iso);
         }
     }
-
 }

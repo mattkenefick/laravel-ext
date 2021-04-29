@@ -1,4 +1,6 @@
-<?php namespace PolymerMallard\Http\Controllers\Api;
+<?php
+
+namespace PolymerMallard\Http\Controllers\Api;
 
 use PolymerMallard\Exception\ApiException;
 use Cache;
@@ -10,13 +12,10 @@ use League\Fractal\Pagination\IlluminatePaginatorAdapter;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Routing\Controller as BaseController;
 use Symfony\Component\HttpFoundation\Response as Codes;
-use Input;
 use Request;
 use DateTime;
 
-
-abstract class Response extends BaseController
-{
+abstract class Response extends BaseController {
     /**
      * Resource key attached to JSON output
      * @var $resourceKey
@@ -34,7 +33,6 @@ abstract class Response extends BaseController
      */
     protected $responseMeta = null;
 
-
     // Actionable
     // ----------------------------------------------------------------------
 
@@ -48,9 +46,8 @@ abstract class Response extends BaseController
      *
      * @return \Response
      */
-    public function model($model, $transformer, $key = null)
-    {
-        $key      = $key ?: $this->resourceKey;
+    public function model($model, $transformer, $key = null) {
+        $key = $key ?: $this->resourceKey;
         $resource = new Fractal\Resource\Item($model, $transformer, $key);
 
         return $this->response($resource);
@@ -66,9 +63,8 @@ abstract class Response extends BaseController
      *
      * @return \Response
      */
-    public function collection($collection, $transformer, $key = null)
-    {
-        $key      = $key ?: $this->resourceKey;
+    public function collection($collection, $transformer, $key = null) {
+        $key = $key ?: $this->resourceKey;
         $resource = new Fractal\Resource\Collection($collection, $transformer, $key);
 
         return $this->response($resource);
@@ -84,19 +80,19 @@ abstract class Response extends BaseController
      *
      * @return \Response
      */
-    public function paginate($paginator, $transformer, $key = null)
-    {
-        $key         = $key ?: $this->resourceKey;
-        $collection  = $paginator->getCollection();
+    public function paginate($paginator, $transformer, $key = null) {
+        $key = $key ?: $this->resourceKey;
+        $collection = $paginator->getCollection();
 
         // print_r($paginator);exit;
         $currentPage = 1;
-        $lastPage    = (int) $paginator->lastPage();
+        $lastPage = (int) $paginator->lastPage();
 
-        $queryParams = array_diff_key($_GET, array_flip(['page']));
-        foreach ($queryParams as $key => $value) {
-            $paginator->addQuery($key, $value);
-        }
+        // $queryParams = array_diff_key($_GET, array_flip(['page']));
+
+        // foreach ($queryParams as $key => $value) {
+        //     $paginator->addQuery($key, $value);
+        // }
 
         $resource = new Fractal\Resource\Collection($collection, $transformer, $key);
         $resource->setPaginator(new IlluminatePaginatorAdapter($paginator));
@@ -111,8 +107,7 @@ abstract class Response extends BaseController
      *
      * @return \Response
      */
-    public function noContent()
-    {
+    public function noContent() {
         return $this->simpleResponse(null, Codes::HTTP_NO_CONTENT);
     }
 
@@ -123,8 +118,7 @@ abstract class Response extends BaseController
      *
      * @return \Response
      */
-    public function created($model = null, $transformer = null)
-    {
+    public function created($model = null, $transformer = null) {
         if ($model) {
             return $this->model($model, $transformer);
         }
@@ -142,14 +136,13 @@ abstract class Response extends BaseController
      *
      * @return \Response
      */
-    public function errorDatabase($exception)
-    {
+    public function errorDatabase($exception) {
         $code = is_numeric($exception) ? $exception : $exception->getCode();
 
         switch ($code) {
-            case "1062":
-            case "23000":
-                $content = "Duplicate entry found.";
+            case '1062':
+            case '23000':
+                $content = 'Duplicate entry found.';
                 break;
 
             default:
@@ -169,8 +162,7 @@ abstract class Response extends BaseController
      *
      * @return \Response
      */
-    public function errorBadRequest($content = "")
-    {
+    public function errorBadRequest($content = '') {
         return $this->error($content, Codes::HTTP_BAD_REQUEST);
     }
 
@@ -183,8 +175,7 @@ abstract class Response extends BaseController
      *
      * @return \Response
      */
-    public function errorConflict($content = "")
-    {
+    public function errorConflict($content = '') {
         return $this->error($content, Codes::HTTP_CONFLICT);
     }
 
@@ -197,8 +188,7 @@ abstract class Response extends BaseController
      *
      * @return \Response
      */
-    public function errorUnauthorized($content = "")
-    {
+    public function errorUnauthorized($content = '') {
         return $this->error($content, Codes::HTTP_UNAUTHORIZED);
     }
 
@@ -211,9 +201,8 @@ abstract class Response extends BaseController
      *
      * @return \Response
      */
-    public function errorPermissions($content = "")
-    {
-        return $this->error($content ?: "User does not have permissions to do this.", Codes::HTTP_UNAUTHORIZED);
+    public function errorPermissions($content = '') {
+        return $this->error($content ?: 'User does not have permissions to do this.', Codes::HTTP_UNAUTHORIZED);
     }
 
     /**
@@ -225,8 +214,7 @@ abstract class Response extends BaseController
      *
      * @return \Response
      */
-    public function errorNotFound($content = "")
-    {
+    public function errorNotFound($content = '') {
         return $this->error($content, Codes::HTTP_NOT_FOUND);
     }
 
@@ -239,8 +227,7 @@ abstract class Response extends BaseController
      *
      * @return \Response
      */
-    public function errorNotAllowed($content = "")
-    {
+    public function errorNotAllowed($content = '') {
         return $this->error($content, Codes::HTTP_METHOD_NOT_ALLOWED);
     }
 
@@ -253,8 +240,7 @@ abstract class Response extends BaseController
      *
      * @return \Response
      */
-    public function errorNotAcceptable($content = "")
-    {
+    public function errorNotAcceptable($content = '') {
         return $this->error($content, Codes::HTTP_NOT_ACCEPTABLE);
     }
 
@@ -267,8 +253,7 @@ abstract class Response extends BaseController
      *
      * @return \Response
      */
-    public function errorUnprocessable($content = "")
-    {
+    public function errorUnprocessable($content = '') {
         return $this->error($content, Codes::HTTP_UNPROCESSABLE_ENTITY);
     }
 
@@ -281,17 +266,14 @@ abstract class Response extends BaseController
      *
      * @return \Response
      */
-    public function errorInternal($content = "")
-    {
+    public function errorInternal($content = '') {
         return $this->error($content, Codes::HTTP_INTERNAL_SERVER_ERROR);
     }
-
 
     // Getters / Setters
     // ----------------------------------------------------------------------
 
-    public function addInclude()
-    {
+    public function addInclude() {
         $args = func_get_args();
 
         foreach ($args as $name) {
@@ -299,13 +281,13 @@ abstract class Response extends BaseController
         }
     }
 
-    public function getIncludes()
-    {
-        return isset($_GET['include']) ? $_GET['include'] : [];
+    public function getIncludes() {
+        return isset($_GET['include'])
+            ? $_GET['include']
+            : [];
     }
 
-    protected function getCacheKey()
-    {
+    protected function getCacheKey() {
         $input = \Request::all();
         ksort($input);
         $queryString = http_build_query($input);
@@ -313,35 +295,31 @@ abstract class Response extends BaseController
         return Request::path() . "?$queryString";
     }
 
-    protected function hasCache()
-    {
+    protected function hasCache() {
         return Cache::has($this->getCacheKey());
     }
-
 
     // Internal
     // ----------------------------------------------------------------------
 
-    protected function error($content = "", $code)
-    {
+    protected function error(string $content = '', $code = 400, $headers = [], bool $shouldExit = false) {
         $response = new \Illuminate\Http\Response($content, $code);
         $response->header('Content-Type', 'application/json');
         $response->header('Cache-Control', 'public');
 
         $response->setContent([
-            'status'  => 'error',
-            'error'   => true,
+            'status' => 'error',
+            'error' => true,
             'message' => $content
         ]);
 
         $response->sendHeaders();
         $response->sendContent();
-        exit;
-        // throw new ApiException($content, null, null, [], $code);
+
+        throw new ApiException($content, null, null, [], $code);
     }
 
-    protected function response($resource, $code = 200)
-    {
+    protected function response($resource, $code = 200) {
         $resource->setResourceKey('data');
 
         if (isset($this->responseMeta)) {
@@ -357,8 +335,8 @@ abstract class Response extends BaseController
 
         // set cache
         if (getenv('API_CACHE') == 'true') {
-            $key       = $this->getCacheKey();
-            $expiry    = _const('MEMCACHE_EXPIRY');
+            $key = $this->getCacheKey();
+            $expiry = _const('MEMCACHE_EXPIRY');
             $expiresAt = Carbon::now()->addMinutes($expiry);
 
             Cache::put($key, $content, $expiresAt);
@@ -368,12 +346,11 @@ abstract class Response extends BaseController
         return $this->simpleResponse($content, 200);
     }
 
-    protected function simpleResponse($content = "", $code = 200, $headers = array())
-    {
+    protected function simpleResponse($content = '', $code = 200, $headers = []) {
         $response = new \Illuminate\Http\Response($content, $code);
         $response->header('Content-Type', 'application/json');
         $response->header('Cache-Control', 'public');
-        $response->setExpires(@$headers['X-MCACHE-EXPIRY'] ?: new DateTime("+5 minutes"));
+        $response->setExpires(@$headers['X-MCACHE-EXPIRY'] ?: new DateTime('+5 minutes'));
 
         // additional headers
         foreach ($headers as $key => $value) {
@@ -383,44 +360,38 @@ abstract class Response extends BaseController
         return $response;
     }
 
-    protected function json($object, $code = 200, $headers = array())
-    {
+    protected function json($object, $code = 200, $headers = []) {
         $content = json_encode($object);
 
         return $this->simpleResponse($content, $code, $headers);
     }
 
-    protected function useCache()
-    {
-        $key     = $this->getCacheKey();
+    protected function useCache() {
+        $key = $this->getCacheKey();
         $content = Cache::get($key);
-        $expiry  = Cache::get($key . '-expiry');
+        $expiry = Cache::get($key . '-expiry');
 
-        return $this->simpleResponse($content, 200, array(
-            'X-MCACHE'        => 'HIT',
-            'X-MCACHE-KEY'    => getenv('API_DEBUG') == 'true' ? $key : null,
+        return $this->simpleResponse($content, 200, [
+            'X-MCACHE' => 'HIT',
+            'X-MCACHE-KEY' => getenv('API_DEBUG') == 'true' ? $key : null,
             'X-MCACHE-EXPIRY' => $expiry,
-        ));
+        ]);
     }
 
-    public function __construct()
-    {
-        // setup includes
-        $this->includes = isset($_GET['include']) ? $_GET['include'] : [];
+    public function __construct() {
+        $this->includes = isset($_GET['include'])
+            ? $_GET['include']
+            : [];
     }
-
 
     // Compatibility
     // ----------------------------------------------------------------------
 
-    public function item($model, $transformer)
-    {
+    public function item($model, $transformer) {
         return $this->model($model, $transformer);
     }
 
-    public function items($model, $transformer)
-    {
+    public function items($model, $transformer) {
         return $this->collection($model, $transformer);
     }
-
 }

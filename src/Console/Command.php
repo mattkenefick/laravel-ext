@@ -1,40 +1,39 @@
-<?php namespace PolymerMallard\Console;
+<?php
 
-use Monolog\Logger;
+namespace PolymerMallard\Console;
+
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 
-
+/**
+ * Command
+ */
 class Command extends \Illuminate\Console\Command {
-
     const INDENT_NONE = 0;
     const INDENT_ONE = 1;
     const INDENT_TWO = 2;
     const INDENT_THREE = 3;
 
     //
-    public function __construct($arguments = array())
-    {
+    public function __construct($arguments = []) {
         parent::__construct();
 
         $this->input = new Input\MockInput($arguments);
     }
 
-    public function log($string, $indentation = 0)
-    {
-        $string = (str_repeat("    ", $indentation)) . $string;
+    public function log($string, $indentation = 0) {
+        $string = (str_repeat('    ', $indentation)) . $string;
 
         return \Log::info("[$this->name] $string");
     }
 
-    public function info($a)
-    {
+    public function info($a) {
         if (\App::runningInConsole()) {
             echo "$a\n";
 
             $this->log($a);
-        }
-        else {
+        } else {
             // parent::info($a);
         }
 
@@ -46,19 +45,18 @@ class Command extends \Illuminate\Console\Command {
      *
      * Test echo log method that can be overriden
      */
-    public function debug($string, $indentation = 0)
-    {
+    public function debug($string, $indentation = 0) {
         // send to laravel file
         $this->log($string, $indentation);
 
-        $log       = new Logger($this->name);
-        $stream    = new StreamHandler($this->getDebugFilepath());
+        $log = new Logger($this->name);
+        $stream = new StreamHandler($this->getDebugFilepath());
         $formatter = new LineFormatter(null, null, true, true);
 
         $stream->setFormatter($formatter);
         $log->pushHandler($stream, Logger::DEBUG);
 
-        $string = (str_repeat("    ", $indentation)) . $string;
+        $string = (str_repeat('    ', $indentation)) . $string;
         $log->addDebug($string);
 
         return false;
@@ -69,27 +67,25 @@ class Command extends \Illuminate\Console\Command {
      *
      * Test echo log method that can be overriden
      */
-    public function error($string, $indentation = 0)
-    {
+    public function error($string, $indentation = 0) {
         // send to laravel file
         $this->log($string, $indentation);
 
         // also run debug, it's annoying to have multiple files...
         $this->debug($string, $indentation);
 
-        $log       = new Logger($this->name);
-        $stream    = new StreamHandler($this->getErrorFilepath());
+        $log = new Logger($this->name);
+        $stream = new StreamHandler($this->getErrorFilepath());
         $formatter = new LineFormatter(null, null, true, true);
 
         $stream->setFormatter($formatter);
         $log->pushHandler($stream, Logger::ERROR);
 
-        $string = (str_repeat("    ", $indentation)) . $string;
+        $string = (str_repeat('    ', $indentation)) . $string;
         $log->addError($string);
 
         return false;
     }
-
 
     // Timer
     // -------------------------------------------------
@@ -104,8 +100,8 @@ class Command extends \Illuminate\Console\Command {
             return false;
         }
 
-        $time_end         = microtime(true);
-        $execution_time   = ($time_end - $this->_timeStart) / 60;
+        $time_end = microtime(true);
+        $execution_time = ($time_end - $this->_timeStart) / 60;
 
         // reset timer
         $this->_timeStart = null;
@@ -114,24 +110,20 @@ class Command extends \Illuminate\Console\Command {
         return $execution_time;
     }
 
-
     // Helpers
     // -------------------------------------------------
 
-    protected function getErrorFilepath()
-    {
+    protected function _getErrorFilepath() {
         $filename = 'error.' . str_replace('\\', '_', get_called_class()) . '.log';
         $path = storage_path() . '/logs/';
 
         return $path . $filename;
     }
 
-    protected function getDebugFilepath()
-    {
+    protected function _getDebugFilepath() {
         $filename = 'debug.' . str_replace('\\', '_', get_called_class()) . '.log';
         $path = storage_path() . '/logs/';
 
         return $path . $filename;
     }
-
 }

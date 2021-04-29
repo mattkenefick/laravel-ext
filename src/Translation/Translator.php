@@ -1,10 +1,10 @@
-<?php namespace PolymerMallard\Translation;
+<?php
+
+namespace PolymerMallard\Translation;
 
 use Illuminate\Translation\Translator as LaravelTranslator;
 
-
 class Translator extends LaravelTranslator {
-
     /**
      * Loaded JSON lang file
      */
@@ -13,16 +13,15 @@ class Translator extends LaravelTranslator {
     /**
      * For custom JSON files
      */
-    public function json($key = null)
-    {
+    public function json($key = null) {
         // get key
         if ($key && isset($this->_jsonLang->$key)) {
             return $this->_jsonLang->$key;
         }
 
         // get key from fallback
-        else if ($key) {
-            $fallback = $this->getJson( \Config::get('app.fallback_locale') );
+        elseif ($key) {
+            $fallback = $this->getJson(\Config::get('app.fallback_locale'));
 
             return $fallback->$key;
         }
@@ -33,14 +32,12 @@ class Translator extends LaravelTranslator {
         }
     }
 
-    public function loadJson($locale = 'en')
-    {
+    public function loadJson($locale = 'en') {
         // json
         $this->_jsonLang = $this->getJson($locale);
     }
 
-    protected function getJson($locale = 'en')
-    {
+    protected function getJson($locale = 'en') {
         // directory of json files
         $path = base_path() . '/' . \Config::get('app.json_lang_path') . '/' . $locale;
 
@@ -55,5 +52,4 @@ class Translator extends LaravelTranslator {
 
         return json_decode($contents);
     }
-
 }

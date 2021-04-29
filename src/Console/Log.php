@@ -1,6 +1,10 @@
-<?php namespace PolymerMallard\Console;
+<?php
 
+namespace PolymerMallard\Console;
 
+/**
+ * Log
+ */
 class Log extends \Illuminate\Support\Facades\Log {
     /**
      * System is unusable.
@@ -122,10 +126,6 @@ class Log extends \Illuminate\Support\Facades\Log {
         return parent::log($message, $context);
     }
 
-
-    // ---------------------------------------------------------------
-
-
     /**
      * Logs with a.
      *
@@ -136,14 +136,16 @@ class Log extends \Illuminate\Support\Facades\Log {
      */
     public function artisan($message, array $context = array())
     {
-        if (getenv('APP_DEBUG'))
+        if (getenv('APP_DEBUG')) {
             return parent::debug("Command: $message", $context);
+        }
     }
 
     public function waypoint($message, array $context = array())
     {
-        if (getenv('APP_DEBUG'))
+        if (getenv('APP_DEBUG')) {
             return parent::info("Waypoint: $message", $context);
+        }
     }
 
 

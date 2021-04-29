@@ -1,24 +1,33 @@
-<?php namespace PolymerMallard\Http\Controllers\Api;
+<?php
+
+namespace PolymerMallard\Http\Controllers\Api;
 
 use App\Data\Models;
-use PolymerMallard\Exception\ApiException;
 use PolymerMallard\Contracts\Api\Request;
-use PolymerMallard\Http\Controllers\Api\Response;
-use Illuminate\Foundation\Bus\DispatchesCommands;
-use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Input;
 use Log;
 use Validator;
 
-
-abstract class Controller extends Response implements Request
-{
+abstract class Controller extends Response implements Request {
+    /**
+     * Maximum value for limit so we can't accidentally
+     * fetch all rows
+     *
+     * @var int
+     */
+    const LIMIT_MAX = 50;
 
     /**
-     * LIMIT_MAX
-     * Prevent responses that are too large
+     * Data to send down to document
+     * @var $domData
      */
-    const LIMIT_MAX = 500;
+    protected $domData = [];
+
+    /**
+     * Additional ModelInterface embeds to include
+     * @var $includes
+     */
+    protected $includes = null;
 
     /**
      * Max amount of results per page for paginated returns.
@@ -46,6 +55,18 @@ abstract class Controller extends Response implements Request
      */
     protected $max_id = null;
 
+    /**
+     * Default page
+     *
+     * @var int
+     */
+    protected $page = 1;
+
+    /**
+     * Resource key attached to JSON output
+     * @var $resourceKey
+     */
+    protected $resourceKey = null;
 
     /**
      * GET based route
@@ -55,8 +76,7 @@ abstract class Controller extends Response implements Request
      *
      * @return \Response
      */
-    public function get_index()
-    {
+    public function get_index() {
         return $this->errorNotAllowed();
     }
 
@@ -68,8 +88,7 @@ abstract class Controller extends Response implements Request
      *
      * @return \Response
      */
-    public function getWithCode($code)
-    {
+    public function getWithCode($code) {
         return $this->errorNotAllowed();
     }
 
@@ -83,8 +102,7 @@ abstract class Controller extends Response implements Request
      *
      * @return \Response
      */
-    public function get_single($id)
-    {
+    public function get_single($id) {
         return $this->errorNotAllowed();
     }
 
@@ -98,8 +116,7 @@ abstract class Controller extends Response implements Request
      *
      * @return \Response
      */
-    public function getWithCode_single($code, $id)
-    {
+    public function getWithCode_single($code, $id) {
         return $this->errorNotAllowed();
     }
 
@@ -113,8 +130,7 @@ abstract class Controller extends Response implements Request
      *
      * @return \Response
      */
-    public function put_single($id)
-    {
+    public function put_single($id) {
         return $this->errorNotAllowed();
     }
 
@@ -126,8 +142,7 @@ abstract class Controller extends Response implements Request
      *
      * @return \Response
      */
-    public function post_index()
-    {
+    public function post_index() {
         return $this->errorNotAllowed();
     }
 
@@ -141,8 +156,7 @@ abstract class Controller extends Response implements Request
      *
      * @return void
      */
-    public function delete_single($id)
-    {
+    public function delete_single($id) {
         return $this->errorNotAllowed();
     }
 
@@ -161,10 +175,9 @@ abstract class Controller extends Response implements Request
      *
      * @return \Response
      */
-    public function payasdfload(array $rules, array $defaults = null)
-    {
-        $fields    = array_keys($rules);
-        $payload   = call_user_func_array('\Request::only', $fields);
+    public function payload(array $rules, array $defaults = null) {
+        $fields = array_keys($rules);
+        $payload = call_user_func_array('\Request::only', $fields);
         $validator = Validator::make($payload, $rules);
 
         if ($validator->fails()) {
@@ -177,8 +190,8 @@ abstract class Controller extends Response implements Request
             }
         }
 
-        return array_filter($payload, function($var) {
-            return ($var !== NULL && $var !== FALSE && $var !== '');
+        return array_filter($payload, function ($var) {
+            return ($var !== null && $var !== false && $var !== '');
         });
     }
 
@@ -197,18 +210,17 @@ abstract class Controller extends Response implements Request
      *
      * @return \Response
      */
-    public function modifierPayload(array $rules)
-    {
-        $fields  = array_keys($rules);
-        $input   = call_user_func_array('\Request::only', $fields);
-        $payload = array_filter($input, function($var) {
-            return ($var !== NULL && $var !== FALSE && $var !== '');
+    public function modifierPayload(array $rules) {
+        $fields = array_keys($rules);
+        $input = call_user_func_array('\Request::only', $fields);
+        $payload = array_filter($input, function ($var) {
+            return ($var !== null && $var !== false && $var !== '');
         });
-        $object  = (object) array(
+        $object = (object) [
             'conditions' => [],
-            'values'     => [],
-            'modifiers'  => []
-        );
+            'values' => [],
+            'modifiers' => []
+        ];
 
         // convert modifiers
         foreach ($payload as $field => $value) {
@@ -217,8 +229,8 @@ abstract class Controller extends Response implements Request
 
             $field_converted = $rules[$field];
 
-            $object->values[]     = $value;
-            $object->modifiers[]  = $modifier;
+            $object->values[] = $value;
+            $object->modifiers[] = $modifier;
             $object->conditions[] = "`$field_converted` $modifier ?";
         }
 
@@ -233,30 +245,29 @@ abstract class Controller extends Response implements Request
      *
      * @return bool
      */
-    public function checkPermissions($do, User $user = null)
-    {
-        if (getenv("API_REQUIRE_PERMISSIONS") === "false") {
-            Log::info("Bypass API Required Permissions. " . \Request::path());
+    // public function checkPermissions($do, User $user = null)
+    // {
+    //     if (getenv("API_REQUIRE_PERMISSIONS") === "false") {
+    //         Log::info("Bypass API Required Permissions. " . \Request::path());
 
-            return true;
-        }
+    //         return true;
+    //     }
 
-        $user = $user ?: \Auth::user();
+    //     $user = $user ?: \Auth::user();
 
-        if (!$user) {
-            return $this->errorUnauthorized();
-        }
+    //     if (!$user) {
+    //         return $this->errorUnauthorized();
+    //     }
 
-        return $user->can($do);
-    }
-
+    //     return $user->can($do);
+    // }
 
     // Internal
     // ----------------------------------------------------------------------
 
-    public function __construct()
-    {
+    public function __construct() {
         // GET variables
+        $this->page = \Request::get('page') ?: $this->page;
         $this->limit = \Request::get('limit') ?: $this->limit;
         $this->max_id = \Request::get('max_id') ?: $this->max_id;
         $this->since_id = \Request::get('since_id') ?: $this->since_id;
@@ -265,8 +276,7 @@ abstract class Controller extends Response implements Request
         $this->limit = max(0, min(static::LIMIT_MAX, $this->limit));
     }
 
-    protected function getModifier($value)
-    {
+    protected function getModifier($value) {
         $modifier = $value[0];
 
         switch ($modifier) {
@@ -274,8 +284,9 @@ abstract class Controller extends Response implements Request
             case '>':
 
                 // gt, lt or equal to
-                if ($value[1] === '=')
+                if ($value[1] === '=') {
                     return $modifier . '=';
+                }
 
                 // gt, lt
                 return $modifier;
@@ -287,35 +298,33 @@ abstract class Controller extends Response implements Request
         }
     }
 
-    protected function getModifierValue($value)
-    {
+    protected function getModifierValue($value) {
         $modifiers = ['<', '>', '<=', '>=', '=', '-', '+'];
 
         if (in_array($value[0], $modifiers)) {
             // or equal to
-            if ($value[1] === '=')
+            if ($value[1] === '=') {
                 return substr($value, 2);
+            }
 
             // regular modifier
             return substr($value, 1);
-        }
-        else {
+        } else {
             return $value;
         }
     }
 
     /**
      * Check if we're allowed to do something
+     *
+     * @return boolean
      */
-    public function can($permission)
-    {
+    public function can($permission) {
         if ($user = Models\Users::fromJWT()) {
-
             // only Admin user ID #1 can access
-            if ( $user->can($permission) ) {
+            if ($user->can($permission)) {
                 return true;
             }
-
         }
 
         return false;
@@ -323,12 +332,13 @@ abstract class Controller extends Response implements Request
 
     /**
      * Check if we're allowed to do something
+     *
+     * @return boolean|User
      */
-    public function adminCan($permission)
-    {
+    public function adminCan($permission) {
         if ($this->isAdminRequest()) {
             if ($user = Models\Users::fromJWT()) {
-                if ( $user->can($permission) ) {
+                if ($user->can($permission)) {
                     return $user;
                 }
             }
@@ -337,10 +347,7 @@ abstract class Controller extends Response implements Request
         return false;
     }
 
-
-    public function isAdminRequest()
-    {
+    public function isAdminRequest() {
         return \Request::has('admin');
     }
-
 }

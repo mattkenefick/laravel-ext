@@ -1,13 +1,10 @@
-<?php namespace PolymerMallard\Database\Query;
+<?php
+
+namespace PolymerMallard\Database\Query;
 
 use Illuminate\Support\Collection;
-use Illuminate\Database\ConnectionInterface;
-use Illuminate\Database\Query\Grammars\Grammar;
-use Illuminate\Database\Query\Processors\Processor;
-
 
 class Builder extends \Illuminate\Database\Query\Builder {
-
     /**
      * whereWithPayload
      *
@@ -22,11 +19,9 @@ class Builder extends \Illuminate\Database\Query\Builder {
      *
      * @return PolymerMallard\Data\Model
      */
-    public function whereWithPayload($payload, $connector = 'and')
-    {
+    public function whereWithPayload($payload, $connector = 'and') {
         // modifier payload
         if (isset($payload->conditions) && count($payload->conditions) > 0) {
-
             // apply params
             return $this->whereRaw(
                 implode(" $connector ", $payload->conditions),
@@ -35,7 +30,7 @@ class Builder extends \Illuminate\Database\Query\Builder {
         }
 
         // regular payload
-        else if (count($payload) > 0 && !isset($payload->conditions)) {
+        elseif (count($payload) > 0 && !isset($payload->conditions)) {
             $source = $this;
 
             foreach ($payload as $key => $value) {
@@ -57,8 +52,7 @@ class Builder extends \Illuminate\Database\Query\Builder {
      *
      * @return PolymerMallard\Data\Model
      */
-    public function where($column, $operator = NULL, $value = NULL, $boolean = 'and')
-    {
+    public function where($column, $operator = null, $value = null, $boolean = 'and') {
         // non-array
         if (!is_array($column)) {
             return parent::where($column, $operator, $value, $boolean);
@@ -66,7 +60,7 @@ class Builder extends \Illuminate\Database\Query\Builder {
 
         if (is_array($column)) {
             foreach ($column as $innerKey => $innerValue) {
-               $this->where($innerKey, '=', $innerValue, $boolean);
+                $this->where($innerKey, '=', $innerValue, $boolean);
             }
         }
 
@@ -78,17 +72,16 @@ class Builder extends \Illuminate\Database\Query\Builder {
      *
      * ID ranges of the content we want to get
      *
-     * @param int $since_id  ID > number
-     * @param int $max_id    ID < number
+     * @param int $since_id ID > number
+     * @param int $max_id   ID < number
      *
      * @return PolymerMallard\Data\Model
      */
-    public function age($since_id = null, $max_id = null, $key = "")
-    {
+    public function age($since_id = null, $max_id = null, $key = '') {
         $source = $this;
 
         if (!empty($key)) {
-            $key = $key . ".";
+            $key = $key . '.';
         }
 
         if (isset($since_id)) {
@@ -101,5 +94,4 @@ class Builder extends \Illuminate\Database\Query\Builder {
 
         return $source;
     }
-
 }

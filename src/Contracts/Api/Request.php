@@ -1,8 +1,11 @@
-<?php namespace PolymerMallard\Contracts\Api;
+<?php
 
+namespace PolymerMallard\Contracts\Api;
 
+/**
+ * Request Contract
+ */
 interface Request {
-
     /**
      * GET based route
      *
@@ -78,5 +81,4 @@ interface Request {
      * @return void
      */
     public function delete_single($id);
-
 }

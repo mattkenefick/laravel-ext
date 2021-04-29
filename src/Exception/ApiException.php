@@ -1,11 +1,12 @@
-<?php namespace PolymerMallard\Exception;
+<?php
+
+namespace PolymerMallard\Exception;
 
 use Exception;
 use Illuminate\Support\MessageBag;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class ApiException extends HttpException
-{
+class ApiException extends HttpException {
     /**
      * MessageBag errors.
      *
@@ -18,12 +19,10 @@ class ApiException extends HttpException
      *
      * @return void
      */
-    public function __construct($message = null, $errors = null, Exception $previous = null, $headers = [], $code = 422)
-    {
+    public function __construct($message = null, $errors = null, Exception $previous = null, $headers = [], $code = 422) {
         if (is_null($errors)) {
             $this->errors = new MessageBag;
-        }
-        else {
+        } else {
             $this->errors = is_array($errors) ? new MessageBag($errors) : $errors;
         }
 
@@ -35,8 +34,7 @@ class ApiException extends HttpException
      *
      * @return \Illuminate\Support\MessageBag
      */
-    public function errors()
-    {
+    public function errors() {
         return $this->getErrors();
     }
 
@@ -45,8 +43,7 @@ class ApiException extends HttpException
      *
      * @return \Illuminate\Support\MessageBag
      */
-    public function getErrors()
-    {
+    public function getErrors() {
         return $this->errors;
     }
 
@@ -55,8 +52,7 @@ class ApiException extends HttpException
      *
      * @return bool
      */
-    public function hasErrors()
-    {
-        return ! $this->errors->isEmpty();
+    public function hasErrors() {
+        return !$this->errors->isEmpty();
     }
 }
