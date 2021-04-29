@@ -66,13 +66,6 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
     ];
 
     /**
-     * Default table name
-     *
-     * @var string
-     */
-    protected string $table = 'unknown';
-
-    /**
      * Validator instance
      *
      * @var Validator
