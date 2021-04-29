@@ -21,7 +21,7 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      *
      * @var array
      */
-    protected static array $requiredFields = [
+    protected static $requiredFields = [
         // no requirements
     ];
 
@@ -33,35 +33,35 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      *
      * @var array
      */
-    public static array $surrogateKeys = [];
+    public static $surrogateKeys = [];
 
     /**
      * Prefix of our cache key
      * Default: get_class(...)
      */
-    public ?string $cachePrefix = null;
+    public $cachePrefix = null;
 
     /**
      * Used for surrogate keys that we can be appended to the list
      */
-    public bool $canCache = true;
+    public $canCache = true;
 
     /**
      * If we should exclude the .N from keys
      */
-    public bool $excludeNewFromSurrogateKeys = false;
+    public $excludeNewFromSurrogateKeys = false;
 
     /**
      * @var $dates
      */
-    protected array $dates = ['deleted_at'];
+    protected $dates = ['deleted_at'];
 
     /**
      * Requirements
      *
      * @var array
      */
-    protected array $rules = [
+    protected $rules = [
         // no rules
     ];
 
