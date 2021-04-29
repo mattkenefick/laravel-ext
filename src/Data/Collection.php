@@ -3,7 +3,8 @@
 namespace PolymerMallard\Data;
 
 // class Collection extends \Illuminate\Support\Collection
-class Collection extends \Illuminate\Database\Eloquent\Collection {
+class Collection extends \Illuminate\Database\Eloquent\Collection
+{
     /**
      * If we should exclude the .N from keys
      */
@@ -13,7 +14,8 @@ class Collection extends \Illuminate\Database\Eloquent\Collection {
      * Attempts to add this model to our list of surrogate keys
      * which are used for invalidation
      */
-    public function addToSurrogateKeys($excludeNew = false, $withPrefix = '') {
+    public function addToSurrogateKeys($excludeNew = false, $withPrefix = '')
+    {
         foreach ($this as $model) {
             if (is_a($model, Model::class)) {
                 $model->addToSurrogateKeys($excludeNew || $this->excludeNewFromSurrogateKeys, $withPrefix);
@@ -24,10 +26,11 @@ class Collection extends \Illuminate\Database\Eloquent\Collection {
     /**
      * Get model at index
      *
-     * @param  int   $index
+     * @param  int $index
      * @return Model
      */
-    public function at(int $index) {
+    public function at(int $index)
+    {
         return $this[$index];
     }
 

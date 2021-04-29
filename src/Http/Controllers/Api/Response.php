@@ -46,7 +46,8 @@ abstract class Response extends BaseController {
      *
      * @return \Response
      */
-    public function model($model, $transformer, $key = null) {
+    public function model($model, $transformer, $key = null)
+    {
         $key = $key ?: $this->resourceKey;
         $resource = new Fractal\Resource\Item($model, $transformer, $key);
 
@@ -63,7 +64,8 @@ abstract class Response extends BaseController {
      *
      * @return \Response
      */
-    public function collection($collection, $transformer, $key = null) {
+    public function collection($collection, $transformer, $key = null)
+    {
         $key = $key ?: $this->resourceKey;
         $resource = new Fractal\Resource\Collection($collection, $transformer, $key);
 
@@ -80,7 +82,8 @@ abstract class Response extends BaseController {
      *
      * @return \Response
      */
-    public function paginate($paginator, $transformer, $key = null) {
+    public function paginate($paginator, $transformer, $key = null)
+    {
         $key = $key ?: $this->resourceKey;
         $collection = $paginator->getCollection();
 
@@ -281,7 +284,8 @@ abstract class Response extends BaseController {
         }
     }
 
-    public function getIncludes() {
+    public function getIncludes()
+    {
         return isset($_GET['include'])
             ? $_GET['include']
             : [];
@@ -302,7 +306,8 @@ abstract class Response extends BaseController {
     // Internal
     // ----------------------------------------------------------------------
 
-    protected function error(string $content = '', $code = 400, $headers = [], bool $shouldExit = false) {
+    protected function error(string $content = '', $code = 400, $headers = array(), bool $shouldExit = false)
+    {
         $response = new \Illuminate\Http\Response($content, $code);
         $response->header('Content-Type', 'application/json');
         $response->header('Cache-Control', 'public');
@@ -366,7 +371,8 @@ abstract class Response extends BaseController {
         return $this->simpleResponse($content, $code, $headers);
     }
 
-    protected function useCache() {
+    protected function useCache()
+    {
         $key = $this->getCacheKey();
         $content = Cache::get($key);
         $expiry = Cache::get($key . '-expiry');
@@ -378,7 +384,8 @@ abstract class Response extends BaseController {
         ]);
     }
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->includes = isset($_GET['include'])
             ? $_GET['include']
             : [];

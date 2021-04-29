@@ -9,7 +9,8 @@ use League\Fractal;
  * The booting and initialization of traits was taken from the
  * Database/Eloquent/Model from Laravel
  */
-class ModelInterface extends Fractal\TransformerAbstract {
+class ModelInterface extends Fractal\TransformerAbstract
+{
     /**
      * For SurrogateKeys Fastly / XKEY Varnish
      *
@@ -35,7 +36,7 @@ class ModelInterface extends Fractal\TransformerAbstract {
      * [$properties description]
      * @var array
      */
-    protected $properties = [];
+    protected $properties = array();
 
     /**
      * Load and decide on model / collection
@@ -43,15 +44,18 @@ class ModelInterface extends Fractal\TransformerAbstract {
      * @param  array $rows
      * @return mixed
      */
-    public static function load($rows = []) {
+    public static function load($rows = [])
+    {
         $instance = new static;
 
         // Collection
         if ($rows && count($rows)) {
             return $instance->collection($rows, $instance);
-        } elseif (is_object($rows)) {
+        }
+        else if (is_object($rows)) {
             return $instance->model($rows, $instance);
-        } else {
+        }
+        else {
             return $instance;
         }
     }
@@ -147,7 +151,8 @@ class ModelInterface extends Fractal\TransformerAbstract {
      *
      * @return void
      */
-    protected function bootIfNotBooted() {
+    protected function bootIfNotBooted()
+    {
         if (!isset(static::$booted[static::class])) {
             static::$booted[static::class] = true;
 
@@ -156,13 +161,13 @@ class ModelInterface extends Fractal\TransformerAbstract {
             static::booted();
         }
     }
-
     /**
      * Perform any actions required before the model boots.
      *
      * @return void
      */
-    protected static function booting() {
+    protected static function booting()
+    {
         //
     }
 
@@ -171,7 +176,8 @@ class ModelInterface extends Fractal\TransformerAbstract {
      *
      * @return void
      */
-    protected static function boot() {
+    protected static function boot()
+    {
         static::bootTraits();
     }
 
@@ -180,7 +186,8 @@ class ModelInterface extends Fractal\TransformerAbstract {
      *
      * @return void
      */
-    protected static function booted() {
+    protected static function booted()
+    {
         //
     }
 
@@ -189,7 +196,8 @@ class ModelInterface extends Fractal\TransformerAbstract {
      *
      * @return void
      */
-    protected static function bootTraits() {
+    protected static function bootTraits()
+    {
         $class = static::class;
 
         $booted = [];
@@ -220,7 +228,8 @@ class ModelInterface extends Fractal\TransformerAbstract {
      *
      * @return void
      */
-    protected function initializeTraits() {
+    protected function initializeTraits()
+    {
         foreach (static::$traitInitializers[static::class] as $method) {
             $this->{$method}();
         }

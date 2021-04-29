@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\Input;
 use Log;
 use Validator;
 
-abstract class Controller extends Response implements Request {
+abstract class Controller extends Response implements Request
+{
     /**
      * Maximum value for limit so we can't accidentally
      * fetch all rows
@@ -21,7 +22,7 @@ abstract class Controller extends Response implements Request {
      * Data to send down to document
      * @var $domData
      */
-    protected $domData = [];
+    protected $domData = array();
 
     /**
      * Additional ModelInterface embeds to include
@@ -175,9 +176,10 @@ abstract class Controller extends Response implements Request {
      *
      * @return \Response
      */
-    public function payload(array $rules, array $defaults = null) {
-        $fields = array_keys($rules);
-        $payload = call_user_func_array('\Request::only', $fields);
+    public function payload(array $rules, array $defaults = null)
+    {
+        $fields    = array_keys($rules);
+        $payload   = call_user_func_array('\Request::only', $fields);
         $validator = Validator::make($payload, $rules);
 
         if ($validator->fails()) {
@@ -262,6 +264,9 @@ abstract class Controller extends Response implements Request {
     //     return $user->can($do);
     // }
 
+    //     return $user->can($do);
+    // }
+
     // Internal
     // ----------------------------------------------------------------------
 
@@ -317,7 +322,7 @@ abstract class Controller extends Response implements Request {
     /**
      * Check if we're allowed to do something
      *
-     * @return boolean
+     * @return  boolean
      */
     public function can($permission) {
         if ($user = Models\Users::fromJWT()) {

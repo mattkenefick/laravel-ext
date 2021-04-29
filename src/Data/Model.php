@@ -15,6 +15,10 @@ use PolymerMallard\Traits;
 abstract class Model extends \Illuminate\Database\Eloquent\Model {
     use Traits\Singleton;
 
+abstract class Model extends \Illuminate\Database\Eloquent\Model
+{
+    use Traits\Singleton;
+
     /**
      * Required fields on create
      *
@@ -72,6 +76,13 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model {
     protected string $table = 'unknown';
 
     /**
+     * Default table name
+     *
+     * @var string
+     */
+    protected $table = 'unknown';
+
+    /**
      * Validator instance
      *
      * @var Validator
@@ -95,7 +106,8 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model {
      *
      * @return [type] [description]
      */
-    public static function bySlug(string $slug, int $type = 0) {
+    public static function bySlug(string $slug, int $type = 0)
+    {
         $model = static::where('slug', $slug);
 
         if ($type) {
@@ -151,7 +163,8 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model {
      *
      * @return boolean
      */
-    public static function useCache($partialKey, $ttl = 600, $onNotFound) {
+    public static function useCache($partialKey, $ttl = 600, $onNotFound)
+    {
         $instance = self::instance();
         $key = $instance->table . '-' . $partialKey;
 
@@ -230,7 +243,8 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model {
      * @return string
      */
     // public function createSlug(string $title, int $type = 0, int $id = 0): string
-    public function createSlug(string $title, array $uniqueConstraints = [], int $idToExclude = 0): string {
+    public function createSlug(string $title, array $uniqueConstraints = [], int $idToExclude = 0): string
+    {
         // Normalize the title
         $slug = Str::slug($title);
 
@@ -246,12 +260,13 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model {
      * Create a field that increments as a string
      * like a slug/username/etc
      *
-     * @param string  $title
-     * @param integer $id
+     * @param  string  $title
+     * @param  integer $id
      *
      * @return string
      */
-    public function createIncrementalField(string $field = 'slug', string $string, array $uniqueConstraints = [], int $idToExclude = 0): string {
+    public function createIncrementalField(string $field = 'slug', string $string, array $uniqueConstraints = [], int $idToExclude = 0): string
+    {
         // Get any that could possibly be related.
         // This cuts the queries down by doing it once.
         $allItems = $this->getRelatedFields($field, $string, $uniqueConstraints, $idToExclude);
@@ -281,7 +296,8 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model {
      * there's no item to purge. Just because the key is on this
      * doesn't mean we have to purge it.
      */
-    public function addToSurrogateKeys($excludeNew = false, $withPrefix = '') {
+    public function addToSurrogateKeys($excludeNew = false, $withPrefix = '')
+    {
         // Usually looks like "f", "md", or "App\Models\Media"
         $cacheKey = $this->getSurrogateKey($withPrefix, false);
 
@@ -302,7 +318,8 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model {
      * Returns surrogate key for use in `addToSurrogateKeys` but also for
      * custom purge requests
      */
-    public function getSurrogateKey($withPrefix = '', $includeId = true) {
+    public function getSurrogateKey($withPrefix = '', $includeId = true)
+    {
         // Usually looks like "f", "md", or "App\Models\Media"
         $cacheKey = $this->cachePrefix != null
             ? $this->cachePrefix
@@ -421,13 +438,14 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model {
     /**
      * Get fields of type
      *
-     * @param string  $string
-     * @param integer $id
-     * @param integer $type
+     * @param  string  $string
+     * @param  integer $id
+     * @param  integer $type
      *
      * @return Collection
      */
-    protected function getRelatedFields(string $field, string $string, array $uniqueConstraints = [], int $idToExclude = 0) {
+    protected function getRelatedFields(string $field, string $string, array $uniqueConstraints = [], int $idToExclude = 0)
+    {
         $model = self::select($field)
             ->where($field, 'like', $string . '%') // Should we use the "-"?
             ->where('id', '<>', $idToExclude);
@@ -444,13 +462,14 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model {
     /**
      * Get slugs of type
      *
-     * @param string  $slug
-     * @param integer $id
-     * @param integer $type
+     * @param  string  $slug
+     * @param  integer $id
+     * @param  integer $type
      *
      * @return Collection
      */
-    protected function getRelatedSlugs(string $slug, array $uniqueConstraints = [], int $idToExclude = 0) {
+    protected function getRelatedSlugs(string $slug, array $uniqueConstraints = [], int $idToExclude = 0)
+    {
         return $this->getRelatedFields('slug', $slug, $uniqueConstraints, $idToExclude);
     }
 
@@ -459,7 +478,8 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model {
      *
      * @return \PolymerMallard\Database\Query\Builder
      */
-    protected function newBaseQueryBuilder() {
+    protected function newBaseQueryBuilder()
+    {
         $conn = $this->getConnection();
 
         $grammar = $conn->getQueryGrammar();
@@ -470,7 +490,8 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model {
     /**
      * custom collection
      */
-    public function newCollection(array $models = []) {
+    public function newCollection(array $models = array())
+    {
         return new Collection($models);
     }
 
@@ -479,7 +500,8 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model {
      *
      * @param void
      */
-    protected function Handle_OnCreatingOrSaving($model): void {
+    protected function Handle_OnCreatingOrSaving($model): void
+    {
         // creating or saving
     }
 
@@ -488,7 +510,8 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model {
      *
      * @param void
      */
-    protected function Handle_OnCreatedOrSaved($model): void {
+    protected function Handle_OnCreatedOrSaved($model): void
+    {
         // created or saved
     }
 
@@ -497,7 +520,8 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model {
      *
      * @param void
      */
-    protected function Handle_OnCreating($model): void {
+    protected function Handle_OnCreating($model): void
+    {
         $this->Handle_OnCreatingOrSaving($model);
 
         // creating
@@ -508,7 +532,8 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model {
      *
      * @param void
      */
-    protected function Handle_OnCreated($model): void {
+    protected function Handle_OnCreated($model): void
+    {
         $this->Handle_OnCreatedOrSaved($model);
 
         // created
@@ -519,7 +544,8 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model {
      *
      * @param void
      */
-    protected function Handle_OnDeleting($model): void {
+    protected function Handle_OnDeleting($model): void
+    {
         // deleting
     }
 
@@ -528,7 +554,8 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model {
      *
      * @param void
      */
-    protected function Handle_OnDeleted($model): void {
+    protected function Handle_OnDeleted($model): void
+    {
         // deleted
     }
 
@@ -537,7 +564,8 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model {
      *
      * @param void
      */
-    protected function Handle_OnRetrieved($model): void {
+    protected function Handle_OnRetrieved($model): void
+    {
         // retrieved
     }
 
@@ -546,7 +574,8 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model {
      *
      * @param void
      */
-    protected function Handle_OnRestoring($model): void {
+    protected function Handle_OnRestoring($model): void
+    {
         // restoring
     }
 
@@ -555,7 +584,8 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model {
      *
      * @param void
      */
-    protected function Handle_OnRestored($model): void {
+    protected function Handle_OnRestored($model): void
+    {
         // restored
     }
 
@@ -564,7 +594,8 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model {
      *
      * @param void
      */
-    protected function Handle_OnSaving($model): void {
+    protected function Handle_OnSaving($model): void
+    {
         $this->Handle_OnCreatingOrSaving($model);
 
         // saved
@@ -575,18 +606,20 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model {
      *
      * @param void
      */
-    protected function Handle_OnSaved($model): void {
+    protected function Handle_OnSaved($model): void
+    {
         $this->Handle_OnCreatedOrSaved($model);
 
         // saved
     }
 
     /**
-     * OnUpdating handler from `booted`
+     * OnUpdated handler from `booted`
      *
      * @param void
      */
-    protected function Handle_OnUpdating($model): void {
+    protected function Handle_OnUpdating($model): void
+    {
         // updated
     }
 
@@ -595,7 +628,8 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model {
      *
      * @param void
      */
-    protected function Handle_OnUpdated($model): void {
+    protected function Handle_OnUpdated($model): void
+    {
         // updated
     }
 }
