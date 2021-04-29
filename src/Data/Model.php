@@ -12,9 +12,6 @@ use League\Fractal\Serializer;
 use PolymerMallard\Database\Query\Builder as Builder;
 use PolymerMallard\Traits;
 
-abstract class Model extends \Illuminate\Database\Eloquent\Model {
-    use Traits\Singleton;
-
 abstract class Model extends \Illuminate\Database\Eloquent\Model
 {
     use Traits\Singleton;
