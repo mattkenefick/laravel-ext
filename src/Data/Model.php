@@ -36,8 +36,10 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
     public static $surrogateKeys = [];
 
     /**
-     * Prefix of our cache key
+     * Prefix of our cache key e.g. 'cmp' for 'cmp.5', 'cmp.10'
      * Default: get_class(...)
+     *
+     * @var string
      */
     public $cachePrefix = null;
 
@@ -54,7 +56,9 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
     /**
      * @var $dates
      */
-    protected $dates = ['deleted_at'];
+    protected $dates = [
+        'deleted_at'
+    ];
 
     /**
      * Requirements
@@ -228,6 +232,11 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
     // public function createSlug(string $title, int $type = 0, int $id = 0): string
     public function createSlug(string $title, array $uniqueConstraints = [], int $idToExclude = 0): string
     {
+        // Refuse to create empty slug
+        if (empty($title)) {
+            throw new \Exception('Cannot create slug from empty string.');
+        }
+
         // Normalize the title
         $slug = Str::slug($title);
 
