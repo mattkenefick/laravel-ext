@@ -150,7 +150,7 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      *
      * @return boolean
      */
-    public static function useCache($partialKey, $ttl = 600, $onNotFound)
+    public static function useCache($partialKey, $ttl, $onNotFound)
     {
         $instance = self::instance();
         $key = $instance->table . '-' . $partialKey;
@@ -257,7 +257,7 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      *
      * @return string
      */
-    public function createIncrementalField(string $field = 'slug', string $string, array $uniqueConstraints = [], int $idToExclude = 0): string
+    public function createIncrementalField(string $field = 'slug', string $string = '', array $uniqueConstraints = [], int $idToExclude = 0): string
     {
         // Get any that could possibly be related.
         // This cuts the queries down by doing it once.
