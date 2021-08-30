@@ -222,16 +222,20 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
     }
 
     /**
-     * Create a slug based on a string
+     * Create a slug based on a string. It will automatically attempt
+     * to upgrade the slug if it runs into an unresolvable conflict
      *
      * @param string  $title
-     * @param integer $id
+     * @param array   $uniqueConstraints
+     * @param integer $idToExclude
      *
      * @return string
      */
-    // public function createSlug(string $title, int $type = 0, int $id = 0): string
-    public function createSlug(string $title, array $uniqueConstraints = [], int $idToExclude = 0): string
-    {
+    public function createSlug(
+        string $title,
+        array $uniqueConstraints = [],
+        int $idToExclude = 0
+    ): string {
         // Refuse to create empty slug
         if (empty($title)) {
             throw new \Exception('Cannot create slug from empty string.');
@@ -252,13 +256,19 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      * Create a field that increments as a string
      * like a slug/username/etc
      *
-     * @param  string  $title
-     * @param  integer $id
+     * @param  string  $field
+     * @param  string  $string
+     * @param  array  $uniqueConstraints
+     * @param  int  $idToExclude
      *
      * @return string
      */
-    public function createIncrementalField(string $field = 'slug', string $string = '', array $uniqueConstraints = [], int $idToExclude = 0): string
-    {
+    public function createIncrementalField(
+        string $field = 'slug',
+        string $string = '',
+        array $uniqueConstraints = [],
+        int $idToExclude = 0
+    ): string {
         // Get any that could possibly be related.
         // This cuts the queries down by doing it once.
         $allItems = $this->getRelatedFields($field, $string, $uniqueConstraints, $idToExclude);
